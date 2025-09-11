@@ -46,10 +46,10 @@ const verifyToken = async (req, res, next) => {
     }
 
     if (user.user_status.code !== "2") {
-      throw new CustomHttpError(
-        `you don't have access, status account is ${user.user_status.name}`,
-        401
-      );
+      return res.status(401).json({
+        success: false,
+        message: `you don't have access, status account is ${user.user_status.name}`,
+      });
     }
 
     req.user = user;
