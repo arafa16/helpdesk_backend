@@ -44,6 +44,12 @@ module.exports = (sequelize, DataTypes) => {
       is_customer: DataTypes.BOOLEAN,
       company_id: DataTypes.INTEGER,
       privilege_id: DataTypes.INTEGER,
+      photo_name: DataTypes.TEXT,
+      photo_type: DataTypes.TEXT,
+      photo_url: DataTypes.TEXT,
+      background_name: DataTypes.TEXT,
+      background_type: DataTypes.TEXT,
+      background_url: DataTypes.TEXT,
       is_active: DataTypes.BOOLEAN,
     },
     {
