@@ -4,6 +4,7 @@ const {
   location: locationModel,
   company: companyModel,
   user_status: userStatusModel,
+  privilege: privilegeModel,
 } = require("../models");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
@@ -196,6 +197,38 @@ const getMe = async (req, res) => {
     where: {
       uuid: req.user.uuid,
     },
+    include: [
+      {
+        model: locationModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
+      {
+        model: divisionModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
+      {
+        model: userStatusModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
+      {
+        model: companyModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
+      {
+        model: privilegeModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
+    ],
     attributes: {
       exclude: ["id", "password"],
     },

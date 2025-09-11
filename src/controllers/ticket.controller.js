@@ -4,6 +4,7 @@ const {
   area: areaModel,
   ticket_access: ticketAccessModel,
   ticket_category: ticketCategoryModel,
+  ticket_trouble_category: ticketTroubleCategoryModel,
   ticket_status: ticketStatusModel,
   ticket_activity: ticketActivityModel,
   user: userModel,
@@ -33,9 +34,21 @@ const createTicketActivity = (data) => {
 };
 
 const getDataTable = async (req, res) => {
-  const { search, ticket_status_uuid, area_uuid } = req.query;
+  const { search, ticket_status_uuid, area_uuid, is_active } = req.query;
 
   let whereClause = {};
+
+  if (is_active) {
+    whereClause = {
+      ...whereClause,
+      is_active: is_active === "1" ? true : false,
+    };
+  } else {
+    whereClause = {
+      ...whereClause,
+      is_active: true,
+    };
+  }
 
   if (search) {
     whereClause = {
@@ -94,6 +107,7 @@ const getDataTable = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
     ],
@@ -153,14 +167,22 @@ const getDataTable = async (req, res) => {
 };
 
 const getDataTableExecutor = async (req, res) => {
-  const { search, ticket_status_uuid, area_uuid } = req.query;
+  const { search, ticket_status_uuid, area_uuid, is_active } = req.query;
 
   let whereClause = {};
 
   whereClause = {
     ...whereClause,
     executor_id: req.user.id,
+    is_active: true,
   };
+
+  if (is_active) {
+    whereClause = {
+      ...whereClause,
+      is_active: is_active === "1" ? true : false,
+    };
+  }
 
   if (search) {
     whereClause = {
@@ -219,6 +241,7 @@ const getDataTableExecutor = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
     ],
@@ -279,7 +302,7 @@ const getDataTableExecutor = async (req, res) => {
 };
 
 const getDataTableCustomer = async (req, res) => {
-  const { search, ticket_status_uuid, area_uuid } = req.query;
+  const { search, ticket_status_uuid, area_uuid, is_active } = req.query;
 
   let whereClause = {};
 
@@ -287,6 +310,18 @@ const getDataTableCustomer = async (req, res) => {
     ...whereClause,
     user_id: req.user.id,
   };
+
+  if (is_active) {
+    whereClause = {
+      ...whereClause,
+      is_active: is_active === "1" ? true : false,
+    };
+  } else {
+    whereClause = {
+      ...whereClause,
+      is_active: true,
+    };
+  }
 
   if (search) {
     whereClause = {
@@ -345,6 +380,7 @@ const getDataTableCustomer = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
     ],
@@ -425,6 +461,8 @@ const createData = async (req, res) => {
     lng,
     gmap,
     priority_level,
+    ticket_trouble_category_uuid,
+    trouble_description,
   } = req.body;
 
   let code = "T";
@@ -514,6 +552,22 @@ const createData = async (req, res) => {
     }
   }
 
+  let ticket_trouble_category_id = null;
+
+  if (ticket_category_uuid) {
+    const find = await ticketTroubleCategoryModel.findOne({
+      where: {
+        uuid: ticket_trouble_category_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket trouble category not found", 404);
+    } else {
+      ticket_trouble_category_id = find.id;
+    }
+  }
+
   let ticket_status_id = 1;
 
   if (ticket_status_uuid) {
@@ -586,9 +640,11 @@ const createData = async (req, res) => {
     lng,
     gmap,
     priority_level,
+    ticket_trouble_category_id,
+    trouble_description,
   });
 
-  const description_history = `Ticket ${ticket.display_name} created by user ${user_id}`;
+  const description_history = `Ticket ${ticket.display_name} created by ${req.user.name}`;
 
   await createTicketHistory(ticket.id, user_id, description_history);
 
@@ -638,6 +694,8 @@ const updateData = async (req, res) => {
     lng,
     gmap,
     priority_level,
+    ticket_trouble_category_uuid,
+    trouble_description,
   } = req.body;
 
   const findTicket = await ticketModel.findOne({
@@ -710,6 +768,22 @@ const updateData = async (req, res) => {
     }
   }
 
+  let ticket_trouble_category_id = null;
+
+  if (ticket_trouble_category_uuid) {
+    const find = await ticketTroubleCategoryModel.findOne({
+      where: {
+        uuid: ticket_trouble_category_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket trouble category not found", 404);
+    } else {
+      ticket_trouble_category_id = find.id;
+    }
+  }
+
   let ticket_status_id = null;
 
   if (ticket_status_uuid) {
@@ -777,9 +851,11 @@ const updateData = async (req, res) => {
     lng,
     gmap,
     priority_level,
+    ticket_trouble_category_id,
+    trouble_description,
   });
 
-  const description_history = `Ticket ${ticket.display_name} created by user ${user_id}`;
+  const description_history = `Ticket ${ticket.display_name} updated by ${req.user.name}`;
 
   await createTicketHistory(ticket.id, user_id, description_history);
 
@@ -797,6 +873,7 @@ const getCreateDataAttribute = async (req, res) => {
   const area = await areaModel.findAll();
   const ticket_access = await ticketAccessModel.findAll();
   const ticket_category = await ticketCategoryModel.findAll();
+  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll();
   const ticket_status = await ticketStatusModel.findAll();
   const customer = await customerModel.findAll();
   const executor = await userModel.findAll({
@@ -818,6 +895,7 @@ const getCreateDataAttribute = async (req, res) => {
       area,
       ticket_access,
       ticket_category,
+      ticket_trouble_category,
       ticket_status,
       executor,
       customer,
@@ -837,6 +915,7 @@ const getEditDataAttribute = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       {
         model: userModel,
@@ -898,6 +977,7 @@ const getEditDataAttribute = async (req, res) => {
   const area = await areaModel.findAll();
   const ticket_access = await ticketAccessModel.findAll();
   const ticket_category = await ticketCategoryModel.findAll();
+  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll();
   const ticket_status = await ticketStatusModel.findAll();
   const customer = await customerModel.findAll();
   const executor = await userModel.findAll({
@@ -920,6 +1000,7 @@ const getEditDataAttribute = async (req, res) => {
       area,
       ticket_access,
       ticket_category,
+      ticket_trouble_category,
       ticket_status,
       executor,
       customer,
@@ -939,6 +1020,7 @@ const getDataById = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       {
         model: userModel,
@@ -1080,6 +1162,26 @@ const updateStatusDataById = async (req, res) => {
   });
 };
 
+const deleteData = async (req, res) => {
+  const { uuid } = req.params;
+
+  const findTicket = await ticketModel.findOne({
+    where: { uuid },
+  });
+
+  if (!findTicket) {
+    throw new CustomHttpError("Ticket not found", 404);
+  }
+
+  await findTicket.update({ is_active: false });
+
+  return res.status(200).json({
+    success: true,
+    message: "Ticket deleted successfully",
+    data: null,
+  });
+};
+
 module.exports = {
   getCreateDataAttribute,
   createData,
@@ -1090,4 +1192,5 @@ module.exports = {
   getDataTableExecutor,
   getDataTableCustomer,
   getEditDataAttribute,
+  deleteData,
 };
