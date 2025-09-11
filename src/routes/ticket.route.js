@@ -9,6 +9,7 @@ const {
   getDataTableCustomer,
   getEditDataAttribute,
   updateData,
+  deleteData,
 } = require("../controllers/ticket.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
 
@@ -23,5 +24,6 @@ router.patch("/data/:uuid/status", verifyToken, updateStatusDataById);
 router.get("/table", verifyToken, getDataTable);
 router.get("/table/executor", verifyToken, getDataTableExecutor);
 router.get("/table/customer", verifyToken, getDataTableCustomer);
+router.delete("/data/:uuid", verifyToken, deleteData);
 
 module.exports = router;
