@@ -50,6 +50,30 @@ module.exports = {
       privilege_id: {
         type: Sequelize.INTEGER,
       },
+      photo_name: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
+      photo_type: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
+      photo_url: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
+      background_name: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
+      background_type: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
+      background_url: {
+        type: Sequelize.TEXT,
+        defaultValue: null,
+      },
       is_active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,

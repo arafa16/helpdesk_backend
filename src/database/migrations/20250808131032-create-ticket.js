@@ -88,6 +88,13 @@ module.exports = {
       priority_level: {
         type: Sequelize.ENUM("low", "medium", "high", "urgent"),
       },
+      ticket_trouble_category_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      trouble_description: {
+        type: Sequelize.TEXT,
+      },
       is_active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,

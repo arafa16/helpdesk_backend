@@ -12,6 +12,10 @@ module.exports = {
       uuid: {
         type: Sequelize.STRING,
       },
+      dashboard: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: true,
+      },
       ticket_customer: {
         type: Sequelize.BOOLEAN,
       },
