@@ -589,7 +589,7 @@ const createData = async (req, res) => {
 
   let ticket_trouble_category_id = null;
 
-  if (ticket_category_uuid) {
+  if (ticket_trouble_category_uuid) {
     const find = await ticketTroubleCategoryModel.findOne({
       where: {
         uuid: ticket_trouble_category_uuid,
