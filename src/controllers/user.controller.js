@@ -5,10 +5,11 @@ const {
   user_status: userStatusModel,
   company: companyModel,
   privilege: privilegeModel,
+  job_position: jobPositionModel,
 } = require("../models");
 const { Op } = require("sequelize");
 const CustomHttpError = require("../utils/custom_http_error.js");
-const user = require("../models/user.js");
+const argon = require("argon2");
 
 const getDatas = async (req, res) => {
   try {
@@ -84,6 +85,10 @@ const getDataTable = async (req, res) => {
         attributes: ["uuid", "name"],
       },
       {
+        model: jobPositionModel,
+        attributes: ["uuid", "name"],
+      },
+      {
         model: privilegeModel,
         attributes: {
           exclude: ["id"],
@@ -120,6 +125,10 @@ const getDataTable = async (req, res) => {
       },
       {
         model: divisionModel,
+        attributes: ["uuid", "name", "code"],
+      },
+      {
+        model: jobPositionModel,
         attributes: ["uuid", "name", "code"],
       },
       {
@@ -182,6 +191,10 @@ const getDataById = async (req, res) => {
         attributes: ["uuid", "name"],
       },
       {
+        model: jobPositionModel,
+        attributes: ["uuid", "name", "code"],
+      },
+      {
         model: privilegeModel,
         attributes: {
           exclude: ["id"],
@@ -218,12 +231,15 @@ const getCreateAttributes = async (req, res) => {
   const company = await companyModel.findAll({
     attributes: ["uuid", "name"],
   });
+  const job_position = await jobPositionModel.findAll({
+    attributes: ["uuid", "name", "code"],
+  });
 
   return res.status(200).json({
     success: true,
     message: "User data retrieved successfully",
     data: null,
-    attributes: { location, division, user_status, company },
+    attributes: { location, division, user_status, company, job_position },
   });
 };
 
@@ -237,6 +253,7 @@ const createData = async (req, res) => {
     division_uuid,
     user_status_uuid,
     company_uuid,
+    job_position_uuid,
     dashboard,
     ticket,
     ticket_executor,
@@ -289,6 +306,17 @@ const createData = async (req, res) => {
     company_id = findCompany.id;
   }
 
+  let job_position_id = null;
+  if (company_uuid) {
+    const findJobPosition = await jobPositionModel.findOne({
+      where: { uuid: job_position_uuid },
+    });
+    if (!findJobPosition) {
+      throw new CustomHttpError("Job Position not found", 404);
+    }
+    job_position_id = findJobPosition.id;
+  }
+
   const user_result = await userModel.create({
     name: name,
     email: email,
@@ -297,6 +325,7 @@ const createData = async (req, res) => {
     location_id,
     division_id,
     user_status_id,
+    job_position_id,
     company_id,
   });
 
@@ -336,6 +365,10 @@ const getUpdateAttributes = async (req, res) => {
     attributes: ["uuid", "name"],
   });
 
+  const job_position = await jobPositionModel.findAll({
+    attributes: ["uuid", "name", "code"],
+  });
+
   const user = await userModel.findOne({
     where: { uuid },
     include: [
@@ -356,6 +389,10 @@ const getUpdateAttributes = async (req, res) => {
         attributes: ["uuid", "name"],
       },
       {
+        model: jobPositionModel,
+        attributes: ["uuid", "name"],
+      },
+      {
         model: privilegeModel,
         attributes: { exclude: ["id"] },
       },
@@ -370,7 +407,7 @@ const getUpdateAttributes = async (req, res) => {
     success: true,
     message: "User data retrieved successfully",
     data: user,
-    attributes: { location, division, user_status, company },
+    attributes: { location, division, user_status, company, job_position },
   });
 };
 
@@ -385,6 +422,7 @@ const updateData = async (req, res) => {
     division_uuid,
     user_status_uuid,
     company_uuid,
+    job_position_uuid,
     dashboard,
     ticket,
     ticket_executor,
@@ -450,6 +488,17 @@ const updateData = async (req, res) => {
     company_id = findCompany.id;
   }
 
+  let job_position_id = null;
+  if (company_uuid) {
+    const findJobPosition = await jobPositionModel.findOne({
+      where: { uuid: job_position_uuid },
+    });
+    if (!findJobPosition) {
+      throw new CustomHttpError("Job Position not found", 404);
+    }
+    job_position_id = findJobPosition.id;
+  }
+
   const user_update = await findUser.update({
     name: name || findUser.name,
     email: email || findUser.email,
@@ -459,6 +508,7 @@ const updateData = async (req, res) => {
     division_id,
     user_status_id,
     company_id,
+    job_position_id,
   });
 
   if (findUser.privilege_id !== null) {
@@ -518,6 +568,33 @@ const deleteData = async (req, res) => {
   });
 };
 
+const changePassword = async (req, res) => {
+  const { password, conf_password } = req.body;
+
+  if (password !== conf_password) {
+    throw new CustomHttpError("password not match, please check again", 401);
+  }
+
+  console.log("user", req.user);
+
+  const user = await userModel.findOne({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  const hasPassword = await argon.hash(password);
+
+  await user.update({
+    password: hasPassword,
+  });
+
+  return res.status(201).json({
+    success: true,
+    message: "Change Password Success",
+  });
+};
+
 module.exports = {
   getDatas,
   getDataTable,
@@ -527,4 +604,5 @@ module.exports = {
   getUpdateAttributes,
   updateData,
   deleteData,
+  changePassword,
 };

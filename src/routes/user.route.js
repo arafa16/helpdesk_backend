@@ -8,6 +8,7 @@ const {
   getCreateAttributes,
   createData,
   deleteData,
+  changePassword,
 } = require("../controllers/user.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
 
@@ -21,5 +22,6 @@ router.patch("/data/:uuid", verifyToken, updateData);
 router.get("/create_attributes", verifyToken, getCreateAttributes);
 router.post("/data", verifyToken, createData);
 router.delete("/data/:uuid", verifyToken, deleteData);
+router.patch("/change_password", verifyToken, changePassword);
 
 module.exports = router;

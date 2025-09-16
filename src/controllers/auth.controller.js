@@ -5,6 +5,7 @@ const {
   company: companyModel,
   user_status: userStatusModel,
   privilege: privilegeModel,
+  job_position: jobPositionModel,
 } = require("../models");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
@@ -17,12 +18,11 @@ const register = async (req, res) => {
     email,
     password,
     phone_number,
+    nip,
     division_uuid,
     location_uuid,
     company_uuid,
   } = req.body;
-
-  console.log(req.body);
 
   if (!name || !email || !password) {
     throw new CustomHttpError("value cannot be null", 400);
@@ -93,6 +93,7 @@ const register = async (req, res) => {
     email,
     password: has_password,
     phone_number,
+    nip,
     location_id,
     division_id,
     company_id,
@@ -107,6 +108,13 @@ const register = async (req, res) => {
       exclude: ["id", "password"],
     },
   });
+
+  const new_privilege = await privilegeModel.create({
+    dashboard: true,
+  });
+
+  register.privilege_id = new_privilege.id;
+  await register.save();
 
   return res.status(201).json({
     success: true,
@@ -228,6 +236,12 @@ const getMe = async (req, res) => {
           exclude: ["id"],
         },
       },
+      {
+        model: jobPositionModel,
+        attributes: {
+          exclude: ["id"],
+        },
+      },
     ],
     attributes: {
       exclude: ["id", "password"],
@@ -279,10 +293,25 @@ const sendEmailReset = async (req, res) => {
   });
 
   const emailMessage = {
-    from: '"Kopkarla" <no-replay@kopkarla.co.id>',
+    from: '"Helpdesk" <no-replay@kopkarla.co.id>',
     to: email,
     subject: "Reset Password",
-    html: `<p>click this link for reset your password <a href="${link}">Reset Password</a></p>`,
+    html: `
+      <p>Hai ${result.name}</p>
+      <p>Click this to reset password</p>
+      <p>
+        <a href="${link}" style="
+          display: inline-block;
+          padding: 10px 30px;
+          font-size: 14px;
+          color: #fff;
+          background-color: #007bff;
+          text-decoration: none;
+          border-radius: 5px;
+        ">Reset Password</a>
+      </p>
+      <p>Thanks</p>
+    `,
   };
 
   await transporter.sendMail(emailMessage);
@@ -307,14 +336,12 @@ const getTokenReset = async (req, res) => {
     where: {
       uuid: verify.uuid,
     },
-    attributes: {
-      exclude: ["id", "password"],
-    },
+    attributes: ["name", "email"],
   });
 
   return res.status(200).json({
     success: true,
-    message: "success",
+    message: "check token successed",
     data: {
       user,
     },

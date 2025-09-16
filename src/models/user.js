@@ -24,6 +24,9 @@ module.exports = (sequelize, DataTypes) => {
       user.belongsTo(models.company, {
         foreignKey: "company_id",
       });
+      user.belongsTo(models.job_position, {
+        foreignKey: "job_position_id",
+      });
     }
   }
   user.init(
@@ -43,6 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       is_executor: DataTypes.BOOLEAN,
       is_customer: DataTypes.BOOLEAN,
       company_id: DataTypes.INTEGER,
+      job_position_id: DataTypes.INTEGER,
       privilege_id: DataTypes.INTEGER,
       photo_name: DataTypes.TEXT,
       photo_type: DataTypes.TEXT,
