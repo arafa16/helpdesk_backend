@@ -47,6 +47,9 @@ module.exports = {
       company_id: {
         type: Sequelize.INTEGER,
       },
+      job_position_id: {
+        type: Sequelize.INTEGER,
+      },
       privilege_id: {
         type: Sequelize.INTEGER,
       },

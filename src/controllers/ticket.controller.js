@@ -20,17 +20,52 @@ const CustomHttpError = require("../utils/custom_http_error.js");
 const {
   createTicketHistory,
 } = require("../controllers/ticket_history.controller.js");
-const { Op, where } = require("sequelize");
+const { Op } = require("sequelize");
 
-const createTicketActivity = (data) => {
-  return ticketActivityModel.create({
-    ticket_id: data.ticket_id,
-    user_id: data.user_id,
-    ticket_status_id: data.ticket_status_id,
-    description: data.description,
-    reminder: data.reminder,
-    schedule_reminder: data.schedule_reminder,
+const createTicketActivity = async (data) => {
+  if (data.ticket_status_code === "5" || data.ticket_status_code === "6") {
+    return await ticketActivityModel.create({
+      ticket_id: data.ticket_id,
+      user_id: data.user_id,
+      ticket_status_id: data.ticket_status_id,
+      description: data.description,
+      reminder: false,
+      schedule_reminder: null,
+      start_date: data.start_date,
+      end_date: data.start_date,
+    });
+  } else {
+    return await ticketActivityModel.create({
+      ticket_id: data.ticket_id,
+      user_id: data.user_id,
+      ticket_status_id: data.ticket_status_id,
+      description: data.description,
+      reminder: data.reminder,
+      schedule_reminder: data.schedule_reminder,
+      start_date: data.start_date,
+    });
+  }
+};
+
+const writeEndDateTicketActivity = async (data) => {
+  const findTicketActivity = await ticketActivityModel.findOne({
+    where: {
+      ticket_id: data.ticket_id,
+    },
+    order: [["id", "DESC"]],
   });
+
+  if (
+    findTicketActivity !== null ||
+    (findTicketActivity !== null && findTicketActivity.code !== "5") ||
+    (findTicketActivity !== null && findTicketActivity.code !== "6")
+  ) {
+    findTicketActivity.schedule_reminder = null;
+    findTicketActivity.reminder = false;
+    findTicketActivity.end_date = data.end_date;
+
+    return await findTicketActivity.save();
+  }
 };
 
 const getDataTable = async (req, res) => {
@@ -654,13 +689,17 @@ const createData = async (req, res) => {
   const schedule_reminder = new Date(getDate);
   schedule_reminder.setMinutes(getMinutes + 5);
 
+  const start_date = new Date(getDate);
+
   await createTicketActivity({
     ticket_id: ticket.id,
-    user_id,
-    description: "",
-    ticket_status_id,
+    user_id: req.user.id,
+    ticket_status_id: ticket_status_id,
+    ticket_status_code: 1,
+    description: `Ticket created`,
     reminder: true,
     schedule_reminder: schedule_reminder,
+    start_date: start_date,
   });
 
   return res.status(201).json({
@@ -1044,7 +1083,14 @@ const getDataById = async (req, res) => {
       },
       {
         model: ticketActivityModel,
-        attributes: ["uuid", "description", "reminder", "schedule_reminder"],
+        attributes: [
+          "uuid",
+          "description",
+          "reminder",
+          "schedule_reminder",
+          "start_date",
+          "end_date",
+        ],
         include: [
           {
             model: ticketStatusModel,
@@ -1132,19 +1178,29 @@ const updateStatusDataById = async (req, res) => {
   await findData.save();
 
   const getDate = Date.now();
+
   const getMinutes = new Date(getDate).getMinutes();
 
   const schedule_reminder = new Date(getDate);
   const time = findStatus.time;
   schedule_reminder.setMinutes(getMinutes + Number(time));
 
+  const start_date = new Date(getDate);
+
+  await writeEndDateTicketActivity({
+    ticket_id: findData.id,
+    end_date: start_date,
+  });
+
   await createTicketActivity({
     ticket_id: findData.id,
     user_id: req.user.id,
     ticket_status_id: findStatus.id,
+    ticket_status_code: findStatus.code,
     description: `Ticket status updated to ${findStatus.name}`,
     reminder: true,
     schedule_reminder: schedule_reminder,
+    start_date: start_date,
   });
 
   await createTicketHistory(

@@ -28,6 +28,14 @@ module.exports = {
       schedule_reminder: {
         type: Sequelize.DATE,
       },
+      start_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      end_date: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       is_active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,
