@@ -176,7 +176,11 @@ const getDataTable = async (req, res) => {
     ],
   });
 
-  const ticket_status = await ticketStatusModel.findAll();
+  const ticket_status = await ticketStatusModel.findAll({
+    where: {
+      is_active: true,
+    },
+  });
 
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
@@ -311,7 +315,11 @@ const getDataTableExecutor = async (req, res) => {
     ],
   });
 
-  const ticket_status = await ticketStatusModel.findAll();
+  const ticket_status = await ticketStatusModel.findAll({
+    where: {
+      is_active: true,
+    },
+  });
 
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
@@ -343,7 +351,7 @@ const getDataTableCustomer = async (req, res) => {
 
   whereClause = {
     ...whereClause,
-    user_id: req.user.id,
+    area_id: req.user.area_id,
   };
 
   if (is_active) {
@@ -439,7 +447,7 @@ const getDataTableCustomer = async (req, res) => {
 
   const allTicket = await ticketModel.findAll({
     where: {
-      user_id: req.user.id,
+      area_id: req.user.area_id,
       is_active: true,
     },
     include: [
@@ -450,7 +458,11 @@ const getDataTableCustomer = async (req, res) => {
     ],
   });
 
-  const ticket_status = await ticketStatusModel.findAll();
+  const ticket_status = await ticketStatusModel.findAll({
+    where: {
+      is_active: true,
+    },
+  });
 
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {

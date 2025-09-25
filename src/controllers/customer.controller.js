@@ -48,6 +48,48 @@ const getDatas = async (req, res) => {
   });
 };
 
+const getDataTable = async (req, res) => {
+  const { search, is_active } = req.query;
+  let whereClause = {};
+
+  if (search) {
+    whereClause = {
+      ...whereClause,
+      [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
+    };
+  }
+
+  if (is_active) {
+    whereClause.is_active = is_active;
+  } else {
+    whereClause.is_active = true;
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const offset = (page - 1) * limit;
+  const data = await customerModel.findAndCountAll({
+    where: whereClause,
+    limit,
+    offset,
+  });
+
+  const pages = Math.ceil(data.count / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Get user status successfully",
+    data: data.rows,
+    meta: {
+      total: data.count,
+      page,
+      limit,
+      pages,
+    },
+  });
+};
+
 const getDataById = async (req, res) => {
   const { uuid } = req.params;
 
@@ -69,45 +111,58 @@ const getDataById = async (req, res) => {
 const createData = async (req, res) => {
   const { name, address, pic, phone_number } = req.body;
 
-  if (!req.files || req.files.file === null || req.files.file === undefined) {
-    throw new CustomHttpError("file can't empty", 401);
-  }
+  if (req.files && req.files.file) {
+    const file = req.files.file;
+    const fileSize = file.data.length;
 
-  const file = req.files.file;
-  const fileSize = file.data.length;
+    const ext = path.extname(file.name);
+    const file_name = crypto.randomUUID() + ext;
+    const file_link = `/attributes/images/customers/${file_name}`;
+    const allowed_type = [".png", ".jpg", ".jpeg"];
 
-  const ext = path.extname(file.name);
-  const file_name = crypto.randomUUID() + ext;
-  const file_link = `/attributes/images/customers/${file_name}`;
-  const allowed_type = [".png", ".jpg", ".jpeg"];
-
-  if (!allowed_type.includes(ext)) {
-    throw new CustomHttpError("Invalid file type", 422);
-  }
-
-  if (fileSize > 5000000) {
-    throw new CustomHttpError("Image must be less than 5 MB", 422);
-  }
-
-  file.mv(`./public/attributes/images/customers/${file_name}`, async (err) => {
-    if (err) {
-      throw new CustomHttpError("Error uploading file", 500);
+    if (!allowed_type.includes(ext)) {
+      throw new CustomHttpError("Invalid file type", 422);
     }
 
+    if (fileSize > 5000000) {
+      throw new CustomHttpError("Image must be less than 5 MB", 422);
+    }
+
+    file.mv(
+      `./public/attributes/images/customers/${file_name}`,
+      async (err) => {
+        if (err) {
+          throw new CustomHttpError("Error uploading file", 500);
+        }
+
+        const newData = await customerModel.create({
+          name,
+          address,
+          pic,
+          phone_number,
+          logo: file_name,
+          logo_url: file_link,
+        });
+
+        return res.status(201).json({
+          success: true,
+          message: "file uploaded",
+          data: newData,
+        });
+      }
+    );
+  } else {
     const newData = await customerModel.create({
       name,
       address,
-      pic,
-      phone_number,
-      logo: file_name,
-      logo_url: file_link,
     });
 
     return res.status(201).json({
       success: true,
       message: "file uploaded",
+      data: newData,
     });
-  });
+  }
 };
 
 const updateData = async (req, res) => {
@@ -150,7 +205,9 @@ const updateData = async (req, res) => {
 
         await findData.update({
           name,
-          description,
+          address,
+          pic,
+          phone_number,
           logo: file_name,
           logo_url: file_link,
         });
@@ -164,7 +221,7 @@ const updateData = async (req, res) => {
   } else {
     await findData.update({
       name,
-      description,
+      address,
     });
 
     return res.status(200).json({
@@ -221,6 +278,7 @@ const deleteData = async (req, res) => {
 
 module.exports = {
   getDatas,
+  getDataTable,
   getDataById,
   createData,
   updateData,

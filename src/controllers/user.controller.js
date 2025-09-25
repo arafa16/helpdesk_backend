@@ -6,8 +6,9 @@ const {
   company: companyModel,
   privilege: privilegeModel,
   job_position: jobPositionModel,
+  area: areaModel,
 } = require("../models");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const argon = require("argon2");
 
@@ -89,6 +90,10 @@ const getDataTable = async (req, res) => {
         attributes: ["uuid", "name"],
       },
       {
+        model: areaModel,
+        attributes: ["uuid", "name"],
+      },
+      {
         model: privilegeModel,
         attributes: {
           exclude: ["id"],
@@ -132,6 +137,10 @@ const getDataTable = async (req, res) => {
         attributes: ["uuid", "name", "code"],
       },
       {
+        model: areaModel,
+        attributes: ["uuid", "name", "code"],
+      },
+      {
         model: privilegeModel,
         attributes: {
           exclude: ["id"],
@@ -142,16 +151,23 @@ const getDataTable = async (req, res) => {
 
   const user_status = await userStatusModel.findAll();
 
-  allUser.forEach((user) => {
-    if (user.user_status.code === "1") {
-      general_report[1].count++;
-    } else if (user.user_status.code === "2") {
-      general_report[2].count++;
-    } else if (user.user_status.code === "3") {
-      general_report[3].count++;
-    }
-    general_report[4].count++;
-  });
+  if (allUser.length > 0) {
+    allUser.forEach((element) => {
+      general_report[element.user_status.code].count += 1;
+      general_report[4].count += 1;
+    });
+  }
+
+  // allUser.forEach((user) => {
+  //   if (user.user_status.code === "1") {
+  //     general_report[1].count++;
+  //   } else if (user.user_status.code === "2") {
+  //     general_report[2].count++;
+  //   } else if (user.user_status.code === "3") {
+  //     general_report[3].count++;
+  //   }
+  //   general_report[4].count++;
+  // });
 
   return res.status(200).json({
     success: true,
@@ -195,6 +211,10 @@ const getDataById = async (req, res) => {
         attributes: ["uuid", "name", "code"],
       },
       {
+        model: areaModel,
+        attributes: ["uuid", "name", "code"],
+      },
+      {
         model: privilegeModel,
         attributes: {
           exclude: ["id"],
@@ -229,9 +249,16 @@ const getCreateAttributes = async (req, res) => {
     attributes: ["uuid", "name", "code"],
   });
   const company = await companyModel.findAll({
+    where: {
+      is_active: true,
+    },
     attributes: ["uuid", "name"],
   });
   const job_position = await jobPositionModel.findAll({
+    attributes: ["uuid", "name", "code"],
+  });
+
+  const area = await areaModel.findAll({
     attributes: ["uuid", "name", "code"],
   });
 
@@ -239,7 +266,14 @@ const getCreateAttributes = async (req, res) => {
     success: true,
     message: "User data retrieved successfully",
     data: null,
-    attributes: { location, division, user_status, company, job_position },
+    attributes: {
+      location,
+      division,
+      user_status,
+      company,
+      job_position,
+      area,
+    },
   });
 };
 
@@ -254,6 +288,7 @@ const createData = async (req, res) => {
     user_status_uuid,
     company_uuid,
     job_position_uuid,
+    area_uuid,
     dashboard,
     ticket,
     ticket_executor,
@@ -317,6 +352,17 @@ const createData = async (req, res) => {
     job_position_id = findJobPosition.id;
   }
 
+  let area_id = null;
+  if (area_uuid) {
+    const findArea = await areaModel.findOne({
+      where: { uuid: area_uuid },
+    });
+    if (!findArea) {
+      throw new CustomHttpError("Area not found", 404);
+    }
+    area_id = findArea.id;
+  }
+
   const user_result = await userModel.create({
     name: name,
     email: email,
@@ -326,6 +372,7 @@ const createData = async (req, res) => {
     division_id,
     user_status_id,
     job_position_id,
+    area_id,
     company_id,
   });
 
@@ -362,10 +409,17 @@ const getUpdateAttributes = async (req, res) => {
     attributes: ["uuid", "name", "code"],
   });
   const company = await companyModel.findAll({
+    where: {
+      is_active: true,
+    },
     attributes: ["uuid", "name"],
   });
 
   const job_position = await jobPositionModel.findAll({
+    attributes: ["uuid", "name", "code"],
+  });
+
+  const area = await areaModel.findAll({
     attributes: ["uuid", "name", "code"],
   });
 
@@ -393,6 +447,10 @@ const getUpdateAttributes = async (req, res) => {
         attributes: ["uuid", "name"],
       },
       {
+        model: areaModel,
+        attributes: ["uuid", "name"],
+      },
+      {
         model: privilegeModel,
         attributes: { exclude: ["id"] },
       },
@@ -407,7 +465,14 @@ const getUpdateAttributes = async (req, res) => {
     success: true,
     message: "User data retrieved successfully",
     data: user,
-    attributes: { location, division, user_status, company, job_position },
+    attributes: {
+      location,
+      division,
+      user_status,
+      company,
+      job_position,
+      area,
+    },
   });
 };
 
@@ -423,6 +488,7 @@ const updateData = async (req, res) => {
     user_status_uuid,
     company_uuid,
     job_position_uuid,
+    area_uuid,
     dashboard,
     ticket,
     ticket_executor,
@@ -489,7 +555,7 @@ const updateData = async (req, res) => {
   }
 
   let job_position_id = null;
-  if (company_uuid) {
+  if (job_position_uuid) {
     const findJobPosition = await jobPositionModel.findOne({
       where: { uuid: job_position_uuid },
     });
@@ -497,6 +563,17 @@ const updateData = async (req, res) => {
       throw new CustomHttpError("Job Position not found", 404);
     }
     job_position_id = findJobPosition.id;
+  }
+
+  let area_id = null;
+  if (area_uuid) {
+    const findArea = await areaModel.findOne({
+      where: { uuid: area_uuid },
+    });
+    if (!findArea) {
+      throw new CustomHttpError("Area not found", 404);
+    }
+    area_id = findArea.id;
   }
 
   const user_update = await findUser.update({
@@ -509,6 +586,7 @@ const updateData = async (req, res) => {
     user_status_id,
     company_id,
     job_position_id,
+    area_id,
   });
 
   if (findUser.privilege_id !== null) {

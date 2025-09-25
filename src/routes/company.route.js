@@ -6,11 +6,13 @@ const {
   createData,
   updateData,
   deleteData,
+  getDataTable,
 } = require("../controllers/company.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
 
 const router = express.Router();
 
+router.get("/table", verifyToken, getDataTable);
 router.get("/datas", verifyToken, getDatas);
 router.get("/data/:uuid", verifyToken, getDataById);
 router.get("/first", getDataFirst);

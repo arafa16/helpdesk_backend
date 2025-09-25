@@ -19,7 +19,7 @@ module.exports = {
       {
         id: 2,
         uuid: uuid.v4(),
-        name: "on the way",
+        name: "prepare & travel time",
         sequence: 2,
         code: 2,
         time: 60,
@@ -30,7 +30,7 @@ module.exports = {
       {
         id: 3,
         uuid: uuid.v4(),
-        name: "analyze",
+        name: "identification",
         sequence: 3,
         code: 3,
         time: 60,
@@ -41,7 +41,7 @@ module.exports = {
       {
         id: 4,
         uuid: uuid.v4(),
-        name: "handling activities",
+        name: "Executing & Recovery",
         sequence: 4,
         code: 4,
         time: 180,

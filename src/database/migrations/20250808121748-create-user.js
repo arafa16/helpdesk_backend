@@ -50,6 +50,9 @@ module.exports = {
       job_position_id: {
         type: Sequelize.INTEGER,
       },
+      area_id: {
+        type: Sequelize.INTEGER,
+      },
       privilege_id: {
         type: Sequelize.INTEGER,
       },

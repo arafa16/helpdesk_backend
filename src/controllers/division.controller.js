@@ -1,4 +1,4 @@
-const { devision: devisionModel } = require("../models/index.js");
+const { division: divisionModel } = require("../models/index.js");
 const { Op } = require("sequelize");
 const CustomHttpError = require("../utils/custom_http_error.js");
 
@@ -36,7 +36,7 @@ const getDatas = async (req, res) => {
   const limit = Number(req.query.limit) || 10;
   const offset = Number(page - 1) * limit;
 
-  const { count, rows } = await devisionModel.findAndCountAll({
+  const { count, rows } = await divisionModel.findAndCountAll({
     where,
     limit,
     offset,
@@ -53,10 +53,52 @@ const getDatas = async (req, res) => {
   });
 };
 
+const getDataTable = async (req, res) => {
+  const { search, is_active } = req.query;
+  let whereClause = {};
+
+  if (search) {
+    whereClause = {
+      ...whereClause,
+      [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
+    };
+  }
+
+  if (is_active) {
+    whereClause.is_active = is_active;
+  } else {
+    whereClause.is_active = true;
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const offset = (page - 1) * limit;
+  const division = await divisionModel.findAndCountAll({
+    where: whereClause,
+    limit,
+    offset,
+  });
+
+  const pages = Math.ceil(division.count / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Get division successfully",
+    data: division.rows,
+    meta: {
+      total: division.count,
+      page,
+      limit,
+      pages,
+    },
+  });
+};
+
 const getDataById = async (req, res) => {
   const { uuid } = req.params;
 
-  const findData = await devisionModel.findOne({
+  const findData = await divisionModel.findOne({
     where: { uuid },
   });
 
@@ -78,7 +120,7 @@ const createData = async (req, res) => {
     throw new CustomHttpError("name, sequence, and code are required", 400);
   }
 
-  const newData = await devisionModel.create({
+  const newData = await divisionModel.create({
     name,
     sequence,
     code,
@@ -96,7 +138,7 @@ const updateData = async (req, res) => {
   const { uuid } = req.params;
   const { name, sequence, code, is_active } = req.body;
 
-  const findData = await devisionModel.findOne({
+  const findData = await divisionModel.findOne({
     where: { uuid },
   });
 
@@ -122,7 +164,7 @@ const deleteData = async (req, res) => {
   const { uuid } = req.params;
   const { permanent } = req.query;
 
-  const findData = await devisionModel.findOne({
+  const findData = await divisionModel.findOne({
     where: { uuid },
   });
 
@@ -163,6 +205,7 @@ const deleteData = async (req, res) => {
 
 module.exports = {
   getDatas,
+  getDataTable,
   getDataById,
   createData,
   updateData,

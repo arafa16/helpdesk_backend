@@ -53,6 +53,48 @@ const getDatas = async (req, res) => {
   });
 };
 
+const getDataTable = async (req, res) => {
+  const { search, is_active } = req.query;
+  let whereClause = {};
+
+  if (search) {
+    whereClause = {
+      ...whereClause,
+      [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
+    };
+  }
+
+  if (is_active) {
+    whereClause.is_active = is_active;
+  } else {
+    whereClause.is_active = true;
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const offset = (page - 1) * limit;
+  const userStatus = await userStatusModel.findAndCountAll({
+    where: whereClause,
+    limit,
+    offset,
+  });
+
+  const pages = Math.ceil(userStatus.count / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Get user status successfully",
+    data: userStatus.rows,
+    meta: {
+      total: userStatus.count,
+      page,
+      limit,
+      pages,
+    },
+  });
+};
+
 const getDataById = async (req, res) => {
   const { uuid } = req.params;
 
@@ -163,6 +205,7 @@ const deleteData = async (req, res) => {
 
 module.exports = {
   getDatas,
+  getDataTable,
   getDataById,
   createData,
   updateData,

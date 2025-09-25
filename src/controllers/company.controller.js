@@ -48,6 +48,48 @@ const getDatas = async (req, res) => {
   });
 };
 
+const getDataTable = async (req, res) => {
+  const { search, is_active } = req.query;
+  let whereClause = {};
+
+  if (search) {
+    whereClause = {
+      ...whereClause,
+      [Op.or]: [{ name: { [Op.like]: `%${search}%` } }],
+    };
+  }
+
+  if (is_active) {
+    whereClause.is_active = is_active;
+  } else {
+    whereClause.is_active = true;
+  }
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
+  const offset = (page - 1) * limit;
+  const company = await companyModel.findAndCountAll({
+    where: whereClause,
+    limit,
+    offset,
+  });
+
+  const pages = Math.ceil(company.count / limit);
+
+  return res.status(200).json({
+    success: true,
+    message: "Get Company successfully",
+    data: company.rows,
+    meta: {
+      total: company.count,
+      page,
+      limit,
+      pages,
+    },
+  });
+};
+
 const getDataById = async (req, res) => {
   const { uuid } = req.params;
 
@@ -81,10 +123,21 @@ const getDataFirst = async (req, res) => {
 };
 
 const createData = async (req, res) => {
-  const { name, description } = req.body;
+  const { name, address } = req.body;
 
   if (!req.files || req.files.file === null || req.files.file === undefined) {
-    throw new CustomHttpError("file can't empty", 401);
+    const newData = await companyModel.create({
+      name,
+      address,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "file uploaded",
+      data: {
+        newData,
+      },
+    });
   }
 
   const file = req.files.file;
@@ -110,7 +163,7 @@ const createData = async (req, res) => {
 
     const newData = await companyModel.create({
       name,
-      description,
+      address,
       logo: file_name,
       logo_url: file_link,
     });
@@ -118,13 +171,16 @@ const createData = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "file uploaded",
+      data: {
+        newData,
+      },
     });
   });
 };
 
 const updateData = async (req, res) => {
   const { uuid } = req.params;
-  const { name, description } = req.body;
+  const { name, address } = req.body;
 
   const findData = await companyModel.findOne({
     where: { uuid },
@@ -162,7 +218,7 @@ const updateData = async (req, res) => {
 
         await findData.update({
           name,
-          description,
+          address,
           logo: file_name,
           logo_url: file_link,
         });
@@ -176,7 +232,7 @@ const updateData = async (req, res) => {
   } else {
     await findData.update({
       name,
-      description,
+      address,
     });
 
     return res.status(200).json({
@@ -233,6 +289,7 @@ const deleteData = async (req, res) => {
 
 module.exports = {
   getDatas,
+  getDataTable,
   getDataById,
   getDataFirst,
   createData,
