@@ -493,6 +493,8 @@ const updateData = async (req, res) => {
     ticket,
     ticket_executor,
     ticket_customer,
+    is_customer,
+    is_executor,
     user,
     setting,
   } = req.body;
@@ -586,6 +588,8 @@ const updateData = async (req, res) => {
     user_status_id,
     company_id,
     job_position_id,
+    is_customer,
+    is_executor,
     area_id,
   });
 
