@@ -148,6 +148,7 @@ const getDataTable = async (req, res) => {
     ],
     offset,
     limit,
+    order: [["id", "DESC"]],
   });
 
   const pages = Math.ceil(parseInt(ticket.count) / limit);
@@ -286,6 +287,7 @@ const getDataTableExecutor = async (req, res) => {
     ],
     offset,
     limit,
+    order: [["id", "DESC"]],
   });
 
   const pages = Math.ceil(parseInt(ticket.count) / limit);
@@ -429,6 +431,7 @@ const getDataTableCustomer = async (req, res) => {
     ],
     offset,
     limit,
+    order: [["id", "DESC"]],
   });
 
   const pages = Math.ceil(parseInt(ticket.count) / limit);
