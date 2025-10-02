@@ -16,7 +16,9 @@ const dayjs = require("dayjs");
 const export_data = async (req, res) => {
   const { year } = req.query;
 
-  let whereClause = {};
+  let whereClause = {
+    is_active: true,
+  };
 
   if (year) {
     whereClause = {
