@@ -11,6 +11,7 @@ const {
   updateData,
   deleteData,
 } = require("../controllers/ticket.controller");
+const { export_data } = require("../controllers/ticket_export.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
 
 const router = express.Router();
@@ -25,5 +26,8 @@ router.get("/table", verifyToken, getDataTable);
 router.get("/table/executor", verifyToken, getDataTableExecutor);
 router.get("/table/customer", verifyToken, getDataTableCustomer);
 router.delete("/data/:uuid", verifyToken, deleteData);
+
+//export
+router.get("/export", export_data);
 
 module.exports = router;
