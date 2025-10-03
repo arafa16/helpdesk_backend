@@ -85,8 +85,8 @@ module.exports = (sequelize, DataTypes) => {
     {
       sequelize,
       modelName: "ticket",
-      createdAt: "created_at",
-      updatedAt: "updated_at",
+      created_at: "created_at",
+      updated_at: "updated_at",
       underscored: true,
     }
   );
