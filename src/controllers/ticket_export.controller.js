@@ -139,8 +139,8 @@ const export_data = async (req, res) => {
         JUSTIFIKASI: "",
         JENIS_GANGGUAN: data?.ticket_category?.name,
         STATUS_GANGGUAN: data?.ticket_status?.name,
-        PENYEBAB_GANGGUAN: data?.description,
-        SOLUSI_GANGGUAN: data?.trouble_description,
+        PENYEBAB_GANGGUAN: data?.rfo,
+        SOLUSI_GANGGUAN: data?.solution,
         KENDALA: "",
         TEKNISI: data?.executor?.name,
       });

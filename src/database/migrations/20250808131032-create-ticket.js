@@ -31,7 +31,7 @@ module.exports = {
       subject: {
         type: Sequelize.TEXT,
       },
-      description: {
+      rfo: {
         type: Sequelize.TEXT,
       },
       customer_id: {
@@ -92,7 +92,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      trouble_description: {
+      solution: {
         type: Sequelize.TEXT,
       },
       is_active: {

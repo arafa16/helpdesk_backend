@@ -91,7 +91,7 @@ const getDataTable = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } },
+        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
         { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
@@ -230,7 +230,7 @@ const getDataTableExecutor = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } },
+        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
         { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
@@ -374,7 +374,7 @@ const getDataTableCustomer = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { description: { [Op.like]: `%${search}%` } },
+        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
         { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
@@ -494,7 +494,7 @@ const createData = async (req, res) => {
   const {
     user_uuid,
     subject,
-    description,
+    rfo,
     customer_uuid,
     network_number,
     address,
@@ -512,7 +512,7 @@ const createData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_uuid,
-    trouble_description,
+    solution,
   } = req.body;
 
   let code = "T";
@@ -673,7 +673,7 @@ const createData = async (req, res) => {
     display_name,
     user_id,
     subject,
-    description,
+    rfo,
     customer_id,
     network_number,
     address,
@@ -691,7 +691,7 @@ const createData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_id,
-    trouble_description,
+    solution,
   });
 
   const description_history = `Ticket ${ticket.display_name} created by ${req.user.name}`;
@@ -731,7 +731,7 @@ const updateData = async (req, res) => {
   const {
     user_uuid,
     subject,
-    description,
+    rfo,
     customer_uuid,
     network_number,
     address,
@@ -749,7 +749,7 @@ const updateData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_uuid,
-    trouble_description,
+    solution,
   } = req.body;
 
   const findTicket = await ticketModel.findOne({
@@ -889,7 +889,7 @@ const updateData = async (req, res) => {
   const ticket = await findTicket.update({
     user_id,
     subject,
-    description,
+    rfo,
     customer_id,
     network_number,
     address,
@@ -906,7 +906,7 @@ const updateData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_id,
-    trouble_description,
+    solution,
   });
 
   const description_history = `Ticket ${ticket.display_name} updated by ${req.user.name}`;

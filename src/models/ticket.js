@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
       display_name: DataTypes.STRING,
       user_id: DataTypes.INTEGER,
       subject: DataTypes.TEXT,
-      description: DataTypes.TEXT,
+      rfo: DataTypes.TEXT,
       customer_id: DataTypes.INTEGER,
       network_number: DataTypes.TEXT,
       address: DataTypes.TEXT,
@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
       gmap: DataTypes.TEXT,
       priority_level: DataTypes.ENUM("low", "medium", "high", "urgent"),
       ticket_trouble_category_id: DataTypes.INTEGER,
-      trouble_description: DataTypes.TEXT,
+      solution: DataTypes.TEXT,
       is_active: DataTypes.BOOLEAN,
     },
     {
