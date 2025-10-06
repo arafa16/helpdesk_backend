@@ -6,6 +6,7 @@ const {
   user_status: userStatusModel,
   privilege: privilegeModel,
   job_position: jobPositionModel,
+  area: areaModel,
 } = require("../models");
 const argon = require("argon2");
 const jwt = require("jsonwebtoken");
@@ -118,7 +119,7 @@ const register = async (req, res) => {
 
   return res.status(201).json({
     success: true,
-    message: "success register",
+    message: "success register, please wait for admin to activate your account",
     data: {
       user,
     },
@@ -126,9 +127,18 @@ const register = async (req, res) => {
 };
 
 const registerAttribute = async (req, res) => {
-  const company = await companyModel.findAll();
-  const location = await locationModel.findAll();
-  const division = await divisionModel.findAll();
+  const company = await companyModel.findAll({
+    where: { is_active: true },
+  });
+  const location = await locationModel.findAll({
+    where: { is_active: true },
+  });
+  const division = await divisionModel.findAll({
+    where: { is_active: true },
+  });
+  const area = await areaModel.findAll({
+    where: { is_active: true },
+  });
 
   return res.status(200).json({
     success: true,
@@ -137,6 +147,7 @@ const registerAttribute = async (req, res) => {
       company,
       location,
       division,
+      area,
     },
   });
 };

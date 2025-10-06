@@ -281,6 +281,7 @@ const createData = async (req, res) => {
   const {
     name,
     email,
+    password,
     nip,
     phone_number,
     location_uuid,
@@ -363,9 +364,15 @@ const createData = async (req, res) => {
     area_id = findArea.id;
   }
 
+  let hashedPassword = null;
+  if (password) {
+    hashedPassword = await argon.hash(password);
+  }
+
   const user_result = await userModel.create({
     name: name,
     email: email,
+    password: hashedPassword,
     nip: nip,
     phone_number: phone_number,
     location_id,
