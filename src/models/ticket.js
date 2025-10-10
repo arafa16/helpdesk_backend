@@ -47,6 +47,9 @@ module.exports = (sequelize, DataTypes) => {
       ticket.hasMany(models.ticket_user_reminder, {
         foreignKey: "ticket_id",
       });
+      ticket.belongsTo(models.ticket_network_status, {
+        foreignKey: "ticket_network_status_id",
+      });
     }
   }
   ticket.init(
@@ -71,6 +74,7 @@ module.exports = (sequelize, DataTypes) => {
       ticket_status_id: DataTypes.INTEGER,
       ticket_access_id: DataTypes.INTEGER,
       area_id: DataTypes.INTEGER,
+      complaint_time: DataTypes.DATE,
       eta: DataTypes.DECIMAL,
       pic: DataTypes.TEXT,
       pic_phone_number: DataTypes.TEXT,
@@ -80,6 +84,22 @@ module.exports = (sequelize, DataTypes) => {
       priority_level: DataTypes.ENUM("low", "medium", "high", "urgent"),
       ticket_trouble_category_id: DataTypes.INTEGER,
       solution: DataTypes.TEXT,
+      ticket_network_status_id: DataTypes.INTEGER,
+      down_time: DataTypes.DATE,
+      up_time: DataTypes.DATE,
+      new_cable: DataTypes.INTEGER,
+      external_pole: DataTypes.INTEGER,
+      new_pole_setup: DataTypes.INTEGER,
+      open_cut: DataTypes.INTEGER,
+      drilling: DataTypes.INTEGER,
+      new_closure: DataTypes.INTEGER,
+      new_splitter: DataTypes.INTEGER,
+      fo_jointing: DataTypes.INTEGER,
+      old_datek: DataTypes.STRING,
+      new_datek: DataTypes.STRING,
+      spk_number: DataTypes.STRING,
+      justification: DataTypes.TEXT,
+      constraint: DataTypes.TEXT,
       is_active: DataTypes.BOOLEAN,
     },
     {

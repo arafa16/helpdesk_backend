@@ -15,12 +15,13 @@ const {
   ticket_activity_comment: ticketActivityCommentModel,
   ticket_user_reminder: ticketUserReminderModel,
   privilege: privilegeModel,
+  ticket_network_status: ticketNetworkStatusModel,
 } = require("../models");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const {
   createTicketHistory,
 } = require("../controllers/ticket_history.controller.js");
-const { Op } = require("sequelize");
+const { Op, or } = require("sequelize");
 
 const createTicketActivity = async (data) => {
   if (data.ticket_status_code === "5" || data.ticket_status_code === "6") {
@@ -130,7 +131,7 @@ const getDataTable = async (req, res) => {
   }
 
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 0;
+  const limit = parseInt(req.query.limit) || 10;
 
   const offset = (page - 1) * limit;
 
@@ -145,9 +146,12 @@ const getDataTable = async (req, res) => {
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
+      { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
+      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
     ],
     offset,
     limit,
+    distinct: true,
     order: [["id", "DESC"]],
   });
 
@@ -269,7 +273,7 @@ const getDataTableExecutor = async (req, res) => {
   }
 
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 0;
+  const limit = parseInt(req.query.limit) || 10;
 
   const offset = (page - 1) * limit;
 
@@ -284,9 +288,12 @@ const getDataTableExecutor = async (req, res) => {
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
+      { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
+      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
     ],
     offset,
     limit,
+    distinct: true,
     order: [["id", "DESC"]],
   });
 
@@ -413,7 +420,7 @@ const getDataTableCustomer = async (req, res) => {
   }
 
   const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 0;
+  const limit = parseInt(req.query.limit) || 10;
 
   const offset = (page - 1) * limit;
 
@@ -428,9 +435,12 @@ const getDataTableCustomer = async (req, res) => {
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
+      { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
+      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
     ],
     offset,
     limit,
+    distinct: true,
     order: [["id", "DESC"]],
   });
 
@@ -504,6 +514,7 @@ const createData = async (req, res) => {
     ticket_status_uuid,
     ticket_access_uuid,
     area_uuid,
+    complaint_time,
     eta,
     pic,
     pic_phone_number,
@@ -513,6 +524,22 @@ const createData = async (req, res) => {
     priority_level,
     ticket_trouble_category_uuid,
     solution,
+    ticket_network_status_uuid,
+    down_time,
+    up_time,
+    new_cable,
+    external_pole,
+    new_pole_setup,
+    open_cut,
+    drilling,
+    new_closure,
+    new_splitter,
+    fo_jointing,
+    old_datek,
+    new_datek,
+    spk_number,
+    justification,
+    constraint,
   } = req.body;
 
   let code = "T";
@@ -666,6 +693,22 @@ const createData = async (req, res) => {
     }
   }
 
+  let ticket_network_status_id = null;
+
+  if (ticket_network_status_uuid) {
+    const find = await ticketNetworkStatusModel.findOne({
+      where: {
+        uuid: ticket_network_status_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket network status not found", 404);
+    } else {
+      ticket_network_status_id = find.id;
+    }
+  }
+
   const ticket = await ticketModel.create({
     code,
     number,
@@ -683,6 +726,7 @@ const createData = async (req, res) => {
     ticket_status_id,
     ticket_access_id,
     area_id,
+    complaint_time,
     eta,
     pic,
     pic_phone_number,
@@ -692,6 +736,22 @@ const createData = async (req, res) => {
     priority_level,
     ticket_trouble_category_id,
     solution,
+    ticket_network_status_id,
+    down_time,
+    up_time,
+    new_cable,
+    external_pole,
+    new_pole_setup,
+    open_cut,
+    drilling,
+    new_closure,
+    new_splitter,
+    fo_jointing,
+    old_datek,
+    new_datek,
+    spk_number,
+    justification,
+    constraint,
   });
 
   const description_history = `Ticket ${ticket.display_name} created by ${req.user.name}`;
@@ -741,6 +801,7 @@ const updateData = async (req, res) => {
     ticket_status_uuid,
     ticket_access_uuid,
     area_uuid,
+    complaint_time,
     eta,
     pic,
     pic_phone_number,
@@ -750,6 +811,22 @@ const updateData = async (req, res) => {
     priority_level,
     ticket_trouble_category_uuid,
     solution,
+    ticket_network_status_uuid,
+    down_time,
+    up_time,
+    new_cable,
+    external_pole,
+    new_pole_setup,
+    open_cut,
+    drilling,
+    new_closure,
+    new_splitter,
+    fo_jointing,
+    old_datek,
+    new_datek,
+    spk_number,
+    justification,
+    constraint,
   } = req.body;
 
   const findTicket = await ticketModel.findOne({
@@ -886,6 +963,22 @@ const updateData = async (req, res) => {
     }
   }
 
+  let ticket_network_status_id = null;
+
+  if (ticket_network_status_uuid) {
+    const find = await ticketNetworkStatusModel.findOne({
+      where: {
+        uuid: ticket_network_status_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket network status not found", 404);
+    } else {
+      ticket_network_status_id = find.id;
+    }
+  }
+
   const ticket = await findTicket.update({
     user_id,
     subject,
@@ -898,6 +991,7 @@ const updateData = async (req, res) => {
     ticket_category_id,
     ticket_access_id,
     area_id,
+    complaint_time,
     eta,
     pic,
     pic_phone_number,
@@ -907,6 +1001,22 @@ const updateData = async (req, res) => {
     priority_level,
     ticket_trouble_category_id,
     solution,
+    ticket_network_status_id,
+    down_time,
+    up_time,
+    new_cable,
+    external_pole,
+    new_pole_setup,
+    open_cut,
+    drilling,
+    new_closure,
+    new_splitter,
+    fo_jointing,
+    old_datek,
+    new_datek,
+    spk_number,
+    justification,
+    constraint,
   });
 
   const description_history = `Ticket ${ticket.display_name} updated by ${req.user.name}`;
@@ -923,22 +1033,44 @@ const updateData = async (req, res) => {
 };
 
 const getCreateDataAttribute = async (req, res) => {
-  const location = await locationModel.findAll();
-  const area = await areaModel.findAll();
-  const ticket_access = await ticketAccessModel.findAll();
-  const ticket_category = await ticketCategoryModel.findAll();
-  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll();
-  const ticket_status = await ticketStatusModel.findAll();
-  const customer = await customerModel.findAll();
+  const location = await locationModel.findAll({
+    where: { is_active: true },
+  });
+  const area = await areaModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_access = await ticketAccessModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_category = await ticketCategoryModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_status = await ticketStatusModel.findAll({
+    where: { is_active: true },
+  });
+  const customer = await customerModel.findAll({
+    where: { is_active: true },
+    order: [["name", "ASC"]],
+  });
   const executor = await userModel.findAll({
     where: {
       is_executor: true,
+      is_active: true,
     },
+    order: [["name", "ASC"]],
   });
   const user_customer = await userModel.findAll({
     where: {
       is_customer: true,
+      is_active: true,
     },
+    order: [["name", "ASC"]],
+  });
+  const ticket_network_status = await ticketNetworkStatusModel.findAll({
+    where: { is_active: true },
   });
 
   return res.status(200).json({
@@ -954,6 +1086,7 @@ const getCreateDataAttribute = async (req, res) => {
       executor,
       customer,
       user_customer,
+      ticket_network_status,
     },
   });
 };
@@ -971,6 +1104,10 @@ const getEditDataAttribute = async (req, res) => {
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      {
+        model: ticketNetworkStatusModel,
+        attributes: ["uuid", "name"],
+      },
       {
         model: userModel,
         attributes: ["uuid", "name"],
@@ -1027,22 +1164,44 @@ const getEditDataAttribute = async (req, res) => {
     ],
     attributes: { exclude: ["id"] },
   });
-  const location = await locationModel.findAll();
-  const area = await areaModel.findAll();
-  const ticket_access = await ticketAccessModel.findAll();
-  const ticket_category = await ticketCategoryModel.findAll();
-  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll();
-  const ticket_status = await ticketStatusModel.findAll();
-  const customer = await customerModel.findAll();
+  const location = await locationModel.findAll({
+    where: { is_active: true },
+  });
+  const area = await areaModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_access = await ticketAccessModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_category = await ticketCategoryModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_trouble_category = await ticketTroubleCategoryModel.findAll({
+    where: { is_active: true },
+  });
+  const ticket_status = await ticketStatusModel.findAll({
+    where: { is_active: true },
+  });
+  const customer = await customerModel.findAll({
+    where: { is_active: true },
+  });
   const executor = await userModel.findAll({
     where: {
       is_executor: true,
+      is_active: true,
     },
+    order: [["name", "ASC"]],
   });
   const user_customer = await userModel.findAll({
     where: {
       is_customer: true,
+      is_active: true,
     },
+    order: [["name", "ASC"]],
+  });
+
+  const ticket_network_status = await ticketNetworkStatusModel.findAll({
+    where: { is_active: true },
   });
 
   return res.status(200).json({
@@ -1059,6 +1218,7 @@ const getEditDataAttribute = async (req, res) => {
       executor,
       customer,
       user_customer,
+      ticket_network_status,
     },
   });
 };
@@ -1076,6 +1236,10 @@ const getDataById = async (req, res) => {
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      {
+        model: ticketNetworkStatusModel,
+        attributes: ["uuid", "name"],
+      },
       {
         model: userModel,
         attributes: ["uuid", "name"],

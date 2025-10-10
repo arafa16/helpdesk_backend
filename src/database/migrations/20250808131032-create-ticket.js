@@ -67,6 +67,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      complaint_time: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
       eta: {
         type: Sequelize.DECIMAL,
       },
@@ -94,6 +98,70 @@ module.exports = {
       },
       solution: {
         type: Sequelize.TEXT,
+      },
+      ticket_network_status_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      down_time: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      up_time: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      new_cable: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      external_pole: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      new_pole_setup: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      open_cut: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      drilling: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      new_closure: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      new_splitter: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      fo_jointing: {
+        type: Sequelize.DECIMAL,
+        allowNull: true,
+      },
+      old_datek: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      new_datek: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      spk_number: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      justification: {
+        type: Sequelize.TEXT,
+        allowNull: true,
+      },
+      constraint: {
+        type: Sequelize.TEXT,
+        allowNull: true,
       },
       is_active: {
         type: Sequelize.BOOLEAN,

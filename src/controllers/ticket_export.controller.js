@@ -64,7 +64,7 @@ const export_data = async (req, res) => {
       { header: "TANGGAL", key: "TANGGAL", width: 25 },
       { header: "JAM ADUAN", key: "JAM_ADUAN", width: 25 },
       { header: "JAM TIBA DILOKASI", key: "JAM_TIBA_DILOKASI", width: 25 },
-      { header: "DURASI ETA", key: "DURASI_ETA", width: 25 },
+      { header: "DURASI ETA (MENIT)", key: "DURASI_ETA", width: 25 },
       { header: "TANGGAL SELESAI", key: "TANGGAL_SELESAI", width: 25 },
       { header: "JAM SELESAI", key: "JAM_SELESAI", width: 25 },
       { header: "DURASI", key: "DURASI", width: 25 },
@@ -79,7 +79,6 @@ const export_data = async (req, res) => {
     ];
 
     ticket.map((data, index) => {
-      console.log("ticket activity", data?.ticket_activities);
       let durasi = data?.ticket_activities
         ?.reduce((sum, activity) => {
           if (activity?.start_date && activity?.end_date) {
@@ -98,30 +97,53 @@ const export_data = async (req, res) => {
         .toFixed(2);
 
       let tiba_dilokasi = data?.ticket_activities.filter(
-        (data) => data?.ticket_status?.code !== "2"
+        (data) => data?.ticket_status?.code === "2"
       );
 
+      let calculate_durasi = tiba_dilokasi
+        ?.reduce((sum, activity) => {
+          if (activity?.start_date && activity?.end_date) {
+            const start = dayjs(activity.start_date);
+            const end = dayjs(activity.end_date);
+            const minutes = end.diff(start, "minute", true);
+            return sum + minutes;
+          } else if (activity?.end_date === null) {
+            const start = dayjs(activity.start_date);
+            const end = dayjs(Date.now());
+            const minutes = end.diff(start, "minute", true);
+            return sum + minutes;
+          }
+          return sum;
+        }, 0)
+        .toFixed(0);
+
       let tanggal_selesai = data?.ticket_activities.filter(
-        (data) => data?.ticket_status?.code !== "5"
+        (data) => data?.ticket_status?.code === "5"
       );
 
       sheet.addRow({
         NO: index + 1,
-        BULAN: dayjs(data?.created_at).format("MMMM"),
+        BULAN: dayjs(data?.createdAt).format("MMMM"),
         PELANGGAN: data?.customer?.name,
         ALAMAT: data?.address,
-        NO_SPK: "",
+        NO_SPK: data?.spk_number,
         NO_JARINGAN: data?.network_number,
         NO_CASE: data?.case_number,
-        TANGGAL: dayjs(data?.created_at).format("YYYY-MM-DD"),
-        JAM_ADUAN: dayjs(data?.created_at).format("HH:mm"),
+        TANGGAL:
+          data?.createdAt !== null
+            ? dayjs(data?.createdAt).format("YYYY-MM-DD")
+            : "",
+        JAM_ADUAN:
+          data?.complaint_time !== null
+            ? dayjs(data?.complaint_time).format("HH:mm")
+            : "",
         JAM_TIBA_DILOKASI:
           tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date !== null
             ? dayjs(tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date).format(
                 "HH:mm"
               )
             : "",
-        DURASI_ETA: data?.eta,
+        DURASI_ETA: calculate_durasi,
         TANGGAL_SELESAI:
           tanggal_selesai[tanggal_selesai.length - 1]?.end_date !== null
             ? dayjs(tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date).format(
@@ -136,12 +158,12 @@ const export_data = async (req, res) => {
             : "",
         DURASI: durasi,
         PENCAPAIAN: durasi >= 6 ? "tidak tercapai" : "tercapai",
-        JUSTIFIKASI: "",
+        JUSTIFIKASI: data?.justification,
         JENIS_GANGGUAN: data?.ticket_category?.name,
         STATUS_GANGGUAN: data?.ticket_status?.name,
         PENYEBAB_GANGGUAN: data?.rfo,
         SOLUSI_GANGGUAN: data?.solution,
-        KENDALA: "",
+        KENDALA: data?.constraint,
         TEKNISI: data?.executor?.name,
       });
     });
