@@ -144,11 +144,11 @@ module.exports = {
         allowNull: true,
       },
       old_datek: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
       new_datek: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
         allowNull: true,
       },
       spk_number: {
