@@ -35,6 +35,16 @@ const createTicketActivity = async (data) => {
       start_date: data.start_date,
       end_date: data.start_date,
     });
+  } else if (data.ticket_status_code === "7") {
+    return await ticketActivityModel.create({
+      ticket_id: data.ticket_id,
+      user_id: data.user_id,
+      ticket_status_id: data.ticket_status_id,
+      description: data.description,
+      reminder: false,
+      schedule_reminder: null,
+      start_date: data.start_date,
+    });
   } else {
     return await ticketActivityModel.create({
       ticket_id: data.ticket_id,
@@ -147,7 +157,16 @@ const getDataTable = async (req, res) => {
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
-      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
+      {
+        model: ticketActivityModel,
+        attributes: { exclude: ["id"] },
+        include: [
+          {
+            model: ticketStatusModel,
+            attributes: ["uuid", "name", "code", "is_active"],
+          },
+        ],
+      },
     ],
     offset,
     limit,
@@ -289,7 +308,16 @@ const getDataTableExecutor = async (req, res) => {
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
-      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
+      {
+        model: ticketActivityModel,
+        attributes: { exclude: ["id"] },
+        include: [
+          {
+            model: ticketStatusModel,
+            attributes: ["uuid", "name", "code", "is_active"],
+          },
+        ],
+      },
     ],
     offset,
     limit,
@@ -436,7 +464,16 @@ const getDataTableCustomer = async (req, res) => {
       { model: userModel, attributes: ["uuid", "name"], as: "executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
-      { model: ticketActivityModel, attributes: { exclude: ["id"] } },
+      {
+        model: ticketActivityModel,
+        attributes: { exclude: ["id"] },
+        include: [
+          {
+            model: ticketStatusModel,
+            attributes: ["uuid", "name", "code", "is_active"],
+          },
+        ],
+      },
     ],
     offset,
     limit,
@@ -1273,7 +1310,7 @@ const getDataById = async (req, res) => {
         include: [
           {
             model: ticketStatusModel,
-            attributes: ["uuid", "name", "code"],
+            attributes: ["uuid", "name", "code", "is_active"],
           },
           {
             model: ticketActivityAttachmentModel,
@@ -1308,7 +1345,13 @@ const getDataById = async (req, res) => {
     ],
   });
 
-  const ticket_status = await ticketStatusModel.findAll();
+  const ticket_status = await ticketStatusModel.findAll({
+    where: { is_active: true },
+  });
+
+  const stop_clock = await ticketStatusModel.findOne({
+    where: { code: "7" },
+  });
 
   const users = await userModel.findAll({
     where: {
@@ -1328,6 +1371,7 @@ const getDataById = async (req, res) => {
     data: {
       ticket: findData,
       ticket_status,
+      stop_clock,
       users,
       user: req.user,
     },

@@ -81,12 +81,19 @@ const export_data = async (req, res) => {
     ticket.map((data, index) => {
       let durasi = data?.ticket_activities
         ?.reduce((sum, activity) => {
-          if (activity?.start_date && activity?.end_date) {
+          if (
+            activity?.ticket_status?.is_active === true &&
+            activity?.start_date &&
+            activity?.end_date
+          ) {
             const start = dayjs(activity.start_date);
             const end = dayjs(activity.end_date);
             const hours = end.diff(start, "hour", true);
             return sum + hours;
-          } else if (activity?.end_date === null) {
+          } else if (
+            activity?.ticket_status?.is_active === true &&
+            activity?.end_date === null
+          ) {
             const start = dayjs(activity.start_date);
             const end = dayjs(Date.now());
             const hours = end.diff(start, "hour", true);

@@ -71,6 +71,17 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       },
+      {
+        id: 7,
+        uuid: uuid.v4(),
+        name: "stop clock",
+        sequence: 7,
+        code: 7,
+        time: 0,
+        is_active: false,
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
     ]);
   },
 
