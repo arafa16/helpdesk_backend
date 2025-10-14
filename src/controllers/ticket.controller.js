@@ -125,20 +125,20 @@ const getDataTable = async (req, res) => {
     };
   }
 
-  // if (area_uuid) {
-  //   const findArea = await areaModel.findOne({
-  //     where: { uuid: area_uuid },
-  //   });
+  if (area_uuid && area_uuid !== "undefined" && area_uuid !== "null") {
+    const findArea = await areaModel.findOne({
+      where: { uuid: area_uuid },
+    });
 
-  //   if (!findArea) {
-  //     throw new CustomHttpError("area not found", 404);
-  //   }
+    if (!findArea) {
+      throw new CustomHttpError("area not found", 404);
+    }
 
-  //   whereClause = {
-  //     ...whereClause,
-  //     area_id: findArea.id,
-  //   };
-  // }
+    whereClause = {
+      ...whereClause,
+      area_id: findArea.id,
+    };
+  }
 
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
