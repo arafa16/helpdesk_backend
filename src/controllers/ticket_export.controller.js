@@ -128,6 +128,13 @@ const export_data = async (req, res) => {
         (data) => data?.ticket_status?.code === "5"
       );
 
+      // Helper to format hours as "X jam Y menit"
+      function formatHourMinute(value) {
+        const hours = Math.floor(value);
+        const minutes = Math.round((value - hours) * 60);
+        return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+      }
+
       sheet.addRow({
         NO: index + 1,
         BULAN: dayjs(data?.createdAt).format("MMMM"),
@@ -150,20 +157,26 @@ const export_data = async (req, res) => {
                 "HH:mm"
               )
             : "",
-        DURASI_ETA: calculate_durasi,
+        DURASI_ETA: calculate_durasi
+          ? (() => {
+              const h = Math.floor(calculate_durasi / 60);
+              const m = calculate_durasi % 60;
+              return `${h.toString().padStart(2, "0")}:${m.toString().padStart(2, "0")}`;
+            })()
+          : "",
         TANGGAL_SELESAI:
           tanggal_selesai[tanggal_selesai.length - 1]?.end_date !== null
-            ? dayjs(tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date).format(
-                "YYYY-MM-DD"
-              )
+            ? dayjs(
+                tanggal_selesai[tanggal_selesai.length - 1]?.end_date
+              ).format("YYYY-MM-DD")
             : "",
         JAM_SELESAI:
           tanggal_selesai[tanggal_selesai.length - 1]?.end_date !== null
-            ? dayjs(tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date).format(
-                "HH:mm"
-              )
+            ? dayjs(
+                tanggal_selesai[tanggal_selesai.length - 1]?.end_date
+              ).format("HH:mm")
             : "",
-        DURASI: durasi,
+        DURASI: durasi ? formatHourMinute(Number(durasi)) : "",
         PENCAPAIAN: durasi >= 6 ? "tidak tercapai" : "tercapai",
         JUSTIFIKASI: data?.justification,
         JENIS_GANGGUAN: data?.ticket_category?.name,
