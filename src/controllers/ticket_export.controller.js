@@ -64,7 +64,7 @@ const export_data = async (req, res) => {
       { header: "TANGGAL", key: "TANGGAL", width: 25 },
       { header: "JAM ADUAN", key: "JAM_ADUAN", width: 25 },
       { header: "JAM TIBA DILOKASI", key: "JAM_TIBA_DILOKASI", width: 25 },
-      { header: "DURASI ETA (MENIT)", key: "DURASI_ETA", width: 25 },
+      { header: "DURASI ETA", key: "DURASI_ETA", width: 25 },
       { header: "TANGGAL SELESAI", key: "TANGGAL_SELESAI", width: 25 },
       { header: "JAM SELESAI", key: "JAM_SELESAI", width: 25 },
       { header: "DURASI", key: "DURASI", width: 25 },
