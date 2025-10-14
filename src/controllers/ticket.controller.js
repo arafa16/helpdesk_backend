@@ -206,6 +206,10 @@ const getDataTable = async (req, res) => {
     },
   });
 
+  const area = await areaModel.findAll({
+    where: { is_active: true },
+  });
+
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
       general_report[element.ticket_status.code].count += 1;
@@ -225,6 +229,7 @@ const getDataTable = async (req, res) => {
     },
     general_report: general_report,
     ticket_status,
+    area,
     user: req.user,
   });
 };

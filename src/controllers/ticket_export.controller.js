@@ -14,7 +14,7 @@ const excelJs = require("exceljs");
 const dayjs = require("dayjs");
 
 const export_data = async (req, res) => {
-  const { year } = req.query;
+  const { year, area_uuid } = req.query;
 
   let whereClause = {
     is_active: true,
@@ -25,6 +25,18 @@ const export_data = async (req, res) => {
       ...whereClause,
       year,
     };
+  }
+
+  if (area_uuid) {
+    const area = await areaModel.findOne({
+      where: { uuid: area_uuid },
+    });
+    if (area) {
+      whereClause = {
+        ...whereClause,
+        area_id: area.id,
+      };
+    }
   }
 
   try {
@@ -55,6 +67,7 @@ const export_data = async (req, res) => {
 
     sheet.columns = [
       { header: "NO", key: "NO", width: 25 },
+      { header: "AREA", key: "AREA", width: 25 },
       { header: "BULAN", key: "BULAN", width: 25 },
       { header: "PELANGGAN", key: "PELANGGAN", width: 25 },
       { header: "ALAMAT", key: "ALAMAT", width: 25 },
@@ -137,6 +150,7 @@ const export_data = async (req, res) => {
 
       sheet.addRow({
         NO: index + 1,
+        AREA: data?.area?.name,
         BULAN: dayjs(data?.createdAt).format("MMMM"),
         PELANGGAN: data?.customer?.name,
         ALAMAT: data?.address,
