@@ -1469,6 +1469,7 @@ const getDataById = async (req, res) => {
       [ticketHistoryModel, "createdAt", "DESC"],
       [ticketActivityModel, "createdAt", "ASC"],
       [ticketAttachmentModel, "createdAt", "ASC"],
+      [ticketActivityModel, ticketActivityCommentModel, "createdAt", "ASC"],
     ],
   });
 
