@@ -11,6 +11,9 @@ const { createTicketHistory } = require("./ticket_history.controller.js");
 
 const createData = async (req, res) => {
   const { uuid } = req.params;
+  const { name } = req.body;
+
+  console.log("body", req.body);
 
   if (!uuid) {
     return res
@@ -37,6 +40,7 @@ const createData = async (req, res) => {
   const file_type = file.mimetype;
 
   const ext = path.extname(file.name);
+  const rename = name ? name + ext : file.name;
   const file_name = crypto.randomUUID() + ext;
   const file_url = `/attributes/attachments/ticket_activity/${file_name}`;
 
@@ -51,7 +55,7 @@ const createData = async (req, res) => {
       try {
         await ticketActivityAttachmentModel.create({
           ticket_activity_id: ticket_activity.id,
-          name: file.name,
+          name: rename,
           file_name,
           file_url,
           file_type,
