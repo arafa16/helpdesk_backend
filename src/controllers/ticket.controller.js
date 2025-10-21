@@ -16,6 +16,7 @@ const {
   ticket_user_reminder: ticketUserReminderModel,
   privilege: privilegeModel,
   ticket_network_status: ticketNetworkStatusModel,
+  ticket_activity_comment_attachment: ticketActivityCommentAttachmentModel,
 } = require("../models");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const {
@@ -102,9 +103,7 @@ const getDataTable = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
-        { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
       ],
     };
@@ -154,7 +153,10 @@ const getDataTable = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
       {
@@ -241,7 +243,12 @@ const getDataTableExecutor = async (req, res) => {
 
   whereClause = {
     ...whereClause,
-    executor_id: req.user.id,
+    [Op.or]: [
+      { first_executor_id: req.user.id },
+      { second_executor_id: req.user.id },
+      { third_executor_id: req.user.id },
+      { fourth_executor_id: req.user.id },
+    ],
     is_active: true,
   };
 
@@ -258,9 +265,7 @@ const getDataTableExecutor = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
-        { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
       ],
     };
@@ -310,7 +315,10 @@ const getDataTableExecutor = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
       {
@@ -346,7 +354,12 @@ const getDataTableExecutor = async (req, res) => {
 
   const allTicket = await ticketModel.findAll({
     where: {
-      executor_id: req.user.id,
+      [Op.or]: [
+        { first_executor_id: req.user.id },
+        { second_executor_id: req.user.id },
+        { third_executor_id: req.user.id },
+        { fourth_executor_id: req.user.id },
+      ],
       is_active: true,
     },
     include: [
@@ -414,9 +427,7 @@ const getDataTableCustomer = async (req, res) => {
       [Op.or]: [
         { display_name: { [Op.like]: `%${search}%` } },
         { subject: { [Op.like]: `%${search}%` } },
-        { rfo: { [Op.like]: `%${search}%` } },
         { network_number: { [Op.like]: `%${search}%` } },
-        { address: { [Op.like]: `%${search}%` } },
         { case_number: { [Op.like]: `%${search}%` } },
       ],
     };
@@ -466,7 +477,10 @@ const getDataTableCustomer = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "user" },
       { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
       {
@@ -551,7 +565,10 @@ const createData = async (req, res) => {
     network_number,
     address,
     case_number,
-    executor_uuid,
+    first_executor_uuid,
+    second_executor_uuid,
+    third_executor_uuid,
+    fourth_executor_uuid,
     ticket_category_uuid,
     ticket_status_uuid,
     ticket_access_uuid,
@@ -639,19 +656,61 @@ const createData = async (req, res) => {
     }
   }
 
-  let executor_id = null;
+  let first_executor_id = null;
 
-  if (executor_uuid) {
+  if (first_executor_uuid) {
     const find = await userModel.findOne({
       where: {
-        uuid: executor_uuid,
+        uuid: first_executor_uuid,
       },
     });
 
     if (find === null) {
       throw new CustomHttpError("executor not found", 404);
     } else {
-      executor_id = find.id;
+      first_executor_id = find.id;
+    }
+  }
+
+  let second_executor_id = null;
+  if (second_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: second_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      second_executor_id = find.id;
+    }
+  }
+
+  let third_executor_id = null;
+  if (third_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: third_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      third_executor_id = find.id;
+    }
+  }
+
+  let fourth_executor_id = null;
+  if (fourth_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: fourth_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      fourth_executor_id = find.id;
     }
   }
 
@@ -763,7 +822,10 @@ const createData = async (req, res) => {
     network_number,
     address,
     case_number,
-    executor_id,
+    first_executor_id,
+    second_executor_id,
+    third_executor_id,
+    fourth_executor_id,
     ticket_category_id,
     ticket_status_id,
     ticket_access_id,
@@ -838,7 +900,10 @@ const updateData = async (req, res) => {
     network_number,
     address,
     case_number,
-    executor_uuid,
+    first_executor_uuid,
+    second_executor_uuid,
+    third_executor_uuid,
+    fourth_executor_uuid,
     ticket_category_uuid,
     ticket_status_uuid,
     ticket_access_uuid,
@@ -909,19 +974,61 @@ const updateData = async (req, res) => {
     }
   }
 
-  let executor_id = null;
+  let first_executor_id = null;
 
-  if (executor_uuid) {
+  if (first_executor_uuid) {
     const find = await userModel.findOne({
       where: {
-        uuid: executor_uuid,
+        uuid: first_executor_uuid,
       },
     });
 
     if (find === null) {
       throw new CustomHttpError("executor not found", 404);
     } else {
-      executor_id = find.id;
+      first_executor_id = find.id;
+    }
+  }
+
+  let second_executor_id = null;
+  if (second_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: second_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      second_executor_id = find.id;
+    }
+  }
+
+  let third_executor_id = null;
+  if (third_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: third_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      third_executor_id = find.id;
+    }
+  }
+
+  let fourth_executor_id = null;
+  if (fourth_executor_uuid) {
+    const find = await userModel.findOne({
+      where: {
+        uuid: fourth_executor_uuid,
+      },
+    });
+    if (find === null) {
+      throw new CustomHttpError("executor not found", 404);
+    } else {
+      fourth_executor_id = find.id;
     }
   }
 
@@ -1029,7 +1136,10 @@ const updateData = async (req, res) => {
     network_number,
     address,
     case_number,
-    executor_id,
+    first_executor_id,
+    second_executor_id,
+    third_executor_id,
+    fourth_executor_id,
     ticket_category_id,
     ticket_access_id,
     area_id,
@@ -1145,7 +1255,10 @@ const getEditDataAttribute = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
       {
         model: ticketNetworkStatusModel,
         attributes: ["uuid", "name"],
@@ -1277,7 +1390,10 @@ const getDataById = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
+      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
       {
         model: ticketNetworkStatusModel,
         attributes: ["uuid", "name"],
@@ -1324,6 +1440,12 @@ const getDataById = async (req, res) => {
           {
             model: ticketActivityCommentModel,
             attributes: ["uuid", "description", "is_active"],
+            include: [
+              {
+                model: ticketActivityCommentAttachmentModel,
+                attributes: { exclude: ["id"] },
+              },
+            ],
           },
         ],
       },

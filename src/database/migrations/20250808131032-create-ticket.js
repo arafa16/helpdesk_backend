@@ -47,7 +47,19 @@ module.exports = {
       case_number: {
         type: Sequelize.TEXT,
       },
-      executor_id: {
+      first_executor_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      second_executor_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      third_executor_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
+      fourth_executor_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },

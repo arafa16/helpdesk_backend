@@ -58,7 +58,7 @@ const deleteData = async (req, res) => {
 
   // Check if the ticket activity exists
   const ticketActivity = await ticketActivityModel.findOne({ where: { uuid } });
-  console.log("ticketActivity", ticketActivity, req.user);
+
   if (!ticketActivity) {
     throw new CustomHttpError("Ticket activity not found", 404);
   }

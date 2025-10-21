@@ -12,8 +12,6 @@ const { createTicketHistory } = require("./ticket_history.controller.js");
 const createData = async (req, res) => {
   const { uuid } = req.params;
 
-  console.log(uuid, "uuid");
-
   if (!uuid) {
     return res
       .status(422)

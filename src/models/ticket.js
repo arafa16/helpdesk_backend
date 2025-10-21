@@ -17,8 +17,20 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "customer_id",
       });
       ticket.belongsTo(models.user, {
-        foreignKey: "executor_id",
-        as: "executor",
+        foreignKey: "first_executor_id",
+        as: "first_executor",
+      });
+      ticket.belongsTo(models.user, {
+        foreignKey: "second_executor_id",
+        as: "second_executor",
+      });
+      ticket.belongsTo(models.user, {
+        foreignKey: "third_executor_id",
+        as: "third_executor",
+      });
+      ticket.belongsTo(models.user, {
+        foreignKey: "fourth_executor_id",
+        as: "fourth_executor",
       });
       ticket.belongsTo(models.ticket_category, {
         foreignKey: "ticket_category_id",
@@ -69,7 +81,10 @@ module.exports = (sequelize, DataTypes) => {
       network_number: DataTypes.TEXT,
       address: DataTypes.TEXT,
       case_number: DataTypes.TEXT,
-      executor_id: DataTypes.INTEGER,
+      first_executor_id: DataTypes.INTEGER,
+      second_executor_id: DataTypes.INTEGER,
+      third_executor_id: DataTypes.INTEGER,
+      fourth_executor_id: DataTypes.INTEGER,
       ticket_category_id: DataTypes.INTEGER,
       ticket_status_id: DataTypes.INTEGER,
       ticket_access_id: DataTypes.INTEGER,

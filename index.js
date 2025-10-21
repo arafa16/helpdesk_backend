@@ -27,6 +27,7 @@ const ticket_router = require("./src/routes/ticket.route.js");
 const ticket_attachment_router = require("./src/routes/ticket_attachment.route.js");
 const ticket_activity_router = require("./src/routes/ticket_activities.route.js");
 const ticket_activity_attachment_router = require("./src/routes/ticket_activity_attachment.route.js");
+const ticket_activity_comment_attachment_router = require("./src/routes/ticket_activity_comment_attachment.route.js");
 const ticket_activity_comment_router = require("./src/routes/ticket_activity_comment.route.js");
 const ticket_user_reminder_router = require("./src/routes/ticket_user_reminder.route.js");
 const user_router = require("./src/routes/user.route.js");
@@ -88,6 +89,10 @@ app.use(
   ticket_activity_attachment_router
 );
 app.use("/api/v1/ticket_activity_comment", ticket_activity_comment_router);
+app.use(
+  "/api/v1/ticket_activity_comment_attachment",
+  ticket_activity_comment_attachment_router
+);
 app.use("/api/v1/ticket_user_reminder", ticket_user_reminder_router);
 app.use("/api/v1/user", user_router);
 

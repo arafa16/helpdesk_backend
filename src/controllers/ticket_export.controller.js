@@ -57,7 +57,26 @@ const export_data = async (req, res) => {
         { model: ticketAccessModel, attributes: ["uuid", "name"] },
         { model: ticketCategoryModel, attributes: ["uuid", "name"] },
         { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-        { model: userModel, attributes: ["uuid", "name"], as: "executor" },
+        {
+          model: userModel,
+          attributes: ["uuid", "name"],
+          as: "first_executor",
+        },
+        {
+          model: userModel,
+          attributes: ["uuid", "name"],
+          as: "second_executor",
+        },
+        {
+          model: userModel,
+          attributes: ["uuid", "name"],
+          as: "third_executor",
+        },
+        {
+          model: userModel,
+          attributes: ["uuid", "name"],
+          as: "fourth_executor",
+        },
         { model: userModel, attributes: ["uuid", "name"], as: "user" },
       ],
     });
@@ -88,7 +107,10 @@ const export_data = async (req, res) => {
       { header: "PENYEBAB GANGGUAN", key: "PENYEBAB_GANGGUAN", width: 25 },
       { header: "SOLUSI GANGGUAN", key: "SOLUSI_GANGGUAN", width: 25 },
       { header: "KENDALA", key: "KENDALA", width: 25 },
-      { header: "TEKNISI", key: "TEKNISI", width: 25 },
+      { header: "TEKNISI 1", key: "TEKNISI_1", width: 25 },
+      { header: "TEKNISI 2", key: "TEKNISI_2", width: 25 },
+      { header: "TEKNISI 3", key: "TEKNISI_3", width: 25 },
+      { header: "TEKNISI 4", key: "TEKNISI_4", width: 25 },
     ];
 
     ticket.map((data, index) => {
@@ -198,7 +220,10 @@ const export_data = async (req, res) => {
         PENYEBAB_GANGGUAN: data?.rfo,
         SOLUSI_GANGGUAN: data?.solution,
         KENDALA: data?.constraint,
-        TEKNISI: data?.executor?.name,
+        TEKNISI_1: data?.first_executor?.name,
+        TEKNISI_2: data?.second_executor?.name,
+        TEKNISI_3: data?.third_executor?.name,
+        TEKNISI_4: data?.fourth_executor?.name,
       });
     });
 

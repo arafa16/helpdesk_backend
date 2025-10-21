@@ -1,7 +1,7 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class ticket_activity_comment extends Model {
+  class ticket_activity_comment_attachment extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,29 +9,26 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      ticket_activity_comment.hasMany(
-        models.ticket_activity_comment_attachment,
-        {
-          foreignKey: "ticket_activity_comment_id",
-        }
-      );
     }
   }
-  ticket_activity_comment.init(
+  ticket_activity_comment_attachment.init(
     {
       uuid: {
         type: DataTypes.STRING,
         defaultValue: DataTypes.UUIDV4,
       },
-      ticket_activity_id: DataTypes.INTEGER,
-      description: DataTypes.TEXT,
+      ticket_activity_comment_id: DataTypes.INTEGER,
+      name: DataTypes.TEXT,
+      file_name: DataTypes.TEXT,
+      file_type: DataTypes.TEXT,
+      file_url: DataTypes.TEXT,
       is_active: DataTypes.BOOLEAN,
     },
     {
       sequelize,
-      modelName: "ticket_activity_comment",
+      modelName: "ticket_activity_comment_attachment",
       underscored: true,
     }
   );
-  return ticket_activity_comment;
+  return ticket_activity_comment_attachment;
 };
