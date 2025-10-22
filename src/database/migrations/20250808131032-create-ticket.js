@@ -175,6 +175,10 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: true,
       },
+      company_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       is_active: {
         type: Sequelize.BOOLEAN,
         defaultValue: true,

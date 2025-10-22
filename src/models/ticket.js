@@ -62,6 +62,9 @@ module.exports = (sequelize, DataTypes) => {
       ticket.belongsTo(models.ticket_network_status, {
         foreignKey: "ticket_network_status_id",
       });
+      ticket.belongsTo(models.company, {
+        foreignKey: "company_id",
+      });
     }
   }
   ticket.init(
@@ -115,6 +118,7 @@ module.exports = (sequelize, DataTypes) => {
       spk_number: DataTypes.STRING,
       justification: DataTypes.TEXT,
       constraint: DataTypes.TEXT,
+      company_id: DataTypes.INTEGER,
       is_active: DataTypes.BOOLEAN,
     },
     {

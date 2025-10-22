@@ -17,6 +17,7 @@ const {
   privilege: privilegeModel,
   ticket_network_status: ticketNetworkStatusModel,
   ticket_activity_comment_attachment: ticketActivityCommentAttachmentModel,
+  company: companyModel,
 } = require("../models");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const {
@@ -169,6 +170,7 @@ const getDataTable = async (req, res) => {
           },
         ],
       },
+      { model: companyModel, attributes: ["uuid", "name"] },
     ],
     offset,
     limit,
@@ -331,6 +333,7 @@ const getDataTableExecutor = async (req, res) => {
           },
         ],
       },
+      { model: companyModel, attributes: ["uuid", "name"] },
     ],
     offset,
     limit,
@@ -407,6 +410,7 @@ const getDataTableCustomer = async (req, res) => {
   whereClause = {
     ...whereClause,
     area_id: req.user.area_id,
+    company_id: req.user.company_id,
   };
 
   if (is_active) {
@@ -493,6 +497,7 @@ const getDataTableCustomer = async (req, res) => {
           },
         ],
       },
+      { model: companyModel, attributes: ["uuid", "name"] },
     ],
     offset,
     limit,
@@ -517,6 +522,7 @@ const getDataTableCustomer = async (req, res) => {
   const allTicket = await ticketModel.findAll({
     where: {
       area_id: req.user.area_id,
+      company_id: req.user.company_id,
       is_active: true,
     },
     include: [
@@ -599,6 +605,7 @@ const createData = async (req, res) => {
     spk_number,
     justification,
     constraint,
+    company_uuid,
   } = req.body;
 
   let code = "T";
@@ -810,6 +817,22 @@ const createData = async (req, res) => {
     }
   }
 
+  let company_id = null;
+
+  if (company_uuid) {
+    const find = await companyModel.findOne({
+      where: {
+        uuid: company_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError(`company not found ${company_uuid}`, 404);
+    } else {
+      company_id = find.id;
+    }
+  }
+
   const ticket = await ticketModel.create({
     code,
     number,
@@ -856,6 +879,7 @@ const createData = async (req, res) => {
     spk_number,
     justification,
     constraint,
+    company_id,
   });
 
   const description_history = `Ticket ${ticket.display_name} created by ${req.user.name}`;
@@ -934,6 +958,7 @@ const updateData = async (req, res) => {
     spk_number,
     justification,
     constraint,
+    company_uuid,
   } = req.body;
 
   const findTicket = await ticketModel.findOne({
@@ -1128,6 +1153,22 @@ const updateData = async (req, res) => {
     }
   }
 
+  let company_id = null;
+
+  if (company_uuid) {
+    const find = await companyModel.findOne({
+      where: {
+        uuid: company_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError(`company not found ${company_uuid}`, 404);
+    } else {
+      company_id = find.id;
+    }
+  }
+
   const ticket = await findTicket.update({
     user_id,
     subject,
@@ -1169,6 +1210,7 @@ const updateData = async (req, res) => {
     spk_number,
     justification,
     constraint,
+    company_id,
   });
 
   const description_history = `Ticket ${ticket.display_name} updated by ${req.user.name}`;
@@ -1207,6 +1249,10 @@ const getCreateDataAttribute = async (req, res) => {
     where: { is_active: true },
     order: [["name", "ASC"]],
   });
+  const company = await companyModel.findAll({
+    where: { is_active: true },
+    order: [["name", "ASC"]],
+  });
   const executor = await userModel.findAll({
     where: {
       is_executor: true,
@@ -1239,6 +1285,7 @@ const getCreateDataAttribute = async (req, res) => {
       customer,
       user_customer,
       ticket_network_status,
+      company,
     },
   });
 };
@@ -1316,6 +1363,10 @@ const getEditDataAttribute = async (req, res) => {
           "description",
         ],
       },
+      {
+        model: companyModel,
+        attributes: ["uuid", "name"],
+      },
     ],
     attributes: { exclude: ["id"] },
   });
@@ -1359,6 +1410,11 @@ const getEditDataAttribute = async (req, res) => {
     where: { is_active: true },
   });
 
+  const company = await companyModel.findAll({
+    where: { is_active: true },
+    order: [["name", "ASC"]],
+  });
+
   return res.status(200).json({
     success: true,
     message: "success",
@@ -1374,6 +1430,7 @@ const getEditDataAttribute = async (req, res) => {
       customer,
       user_customer,
       ticket_network_status,
+      company,
     },
   });
 };
@@ -1463,6 +1520,10 @@ const getDataById = async (req, res) => {
           "file_type",
           "description",
         ],
+      },
+      {
+        model: companyModel,
+        attributes: ["uuid", "name"],
       },
     ],
     order: [
