@@ -18,12 +18,60 @@ const {
   ticket_network_status: ticketNetworkStatusModel,
   ticket_activity_comment_attachment: ticketActivityCommentAttachmentModel,
   company: companyModel,
+  ticket_job_position_reminder: ticketJobPositionReminderModel,
+  job_position: jobPositionModel,
 } = require("../models");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const {
   createTicketHistory,
 } = require("../controllers/ticket_history.controller.js");
-const { Op, or } = require("sequelize");
+const { Op } = require("sequelize");
+
+const create_job_position_reminder = async (
+  ticket_id,
+  job_position_code,
+  date
+) => {
+  await job_position_code.map(async (code) => {
+    const getHours = new Date(date).getHours();
+
+    let schedule_reminder = null;
+
+    if (code === 3) {
+      const reminder = new Date(date);
+      reminder.setHours(getHours + 3);
+      schedule_reminder = reminder;
+    } else if (code === 4) {
+      const reminder = new Date(date);
+      reminder.setHours(getHours + 4);
+      schedule_reminder = reminder;
+    } else if (code === 6) {
+      const reminder = new Date(date);
+      reminder.setHours(getHours + 5);
+      schedule_reminder = reminder;
+    } else if (code === 7) {
+      const reminder = new Date(date);
+      reminder.setHours(getHours + 6);
+      schedule_reminder = reminder;
+    }
+
+    const find_position = await jobPositionModel.findOne({
+      where: {
+        code: code,
+      },
+      attributes: ["id"],
+    });
+
+    if (find_position !== null) {
+      await ticketJobPositionReminderModel.create({
+        ticket_id: ticket_id,
+        job_position_id: find_position.id,
+        reminder: true,
+        schedule_reminder: schedule_reminder,
+      });
+    }
+  });
+};
 
 const createTicketActivity = async (data) => {
   if (data.ticket_status_code === "5" || data.ticket_status_code === "6") {
@@ -904,6 +952,10 @@ const createData = async (req, res) => {
     schedule_reminder: schedule_reminder,
     start_date: start_date,
   });
+
+  const job_position_code = [3, 4, 6, 7];
+
+  await create_job_position_reminder(ticket.id, job_position_code, getDate);
 
   return res.status(201).json({
     success: true,

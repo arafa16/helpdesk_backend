@@ -65,6 +65,9 @@ module.exports = (sequelize, DataTypes) => {
       ticket.belongsTo(models.company, {
         foreignKey: "company_id",
       });
+      ticket.hasMany(models.ticket_job_position_reminder, {
+        foreignKey: "ticket_id",
+      });
     }
   }
   ticket.init(
