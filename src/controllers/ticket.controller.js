@@ -25,7 +25,7 @@ const CustomHttpError = require("../utils/custom_http_error.js");
 const {
   createTicketHistory,
 } = require("../controllers/ticket_history.controller.js");
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 const create_job_position_reminder = async (
   ticket_id,
@@ -71,6 +71,20 @@ const create_job_position_reminder = async (
       });
     }
   });
+};
+
+const update_job_position_reminder = async (data) => {
+  await ticketJobPositionReminderModel.update(
+    {
+      reminder: false,
+      schedule_reminder: null,
+    },
+    {
+      where: {
+        ticket_id: data.ticket_id,
+      },
+    }
+  );
 };
 
 const createTicketActivity = async (data) => {
@@ -1640,6 +1654,14 @@ const updateStatusDataById = async (req, res) => {
   findData.ticket_status_id = findStatus.id;
 
   await findData.save();
+
+  if (
+    findStatus.code === "5" ||
+    findStatus.code === "6" ||
+    findStatus.code === "7"
+  ) {
+    await update_job_position_reminder({ ticket_id: findData.id });
+  }
 
   const getDate = Date.now();
 

@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      ticket_job_position_reminder.belongsTo(models.ticket, {
+        foreignKey: "ticket_id",
+      });
+      ticket_job_position_reminder.belongsTo(models.job_position, {
+        foreignKey: "job_position_id",
+      });
     }
   }
   ticket_job_position_reminder.init(
