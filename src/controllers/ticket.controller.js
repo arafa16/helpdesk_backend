@@ -1562,7 +1562,7 @@ const getDataById = async (req, res) => {
           },
           {
             model: ticketActivityCommentModel,
-            attributes: ["uuid", "description", "is_active"],
+            attributes: ["uuid", "description", "is_active", "created_at"],
             include: [
               {
                 model: ticketActivityCommentAttachmentModel,
