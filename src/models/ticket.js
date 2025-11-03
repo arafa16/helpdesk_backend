@@ -104,6 +104,7 @@ module.exports = (sequelize, DataTypes) => {
       gmap: DataTypes.TEXT,
       priority_level: DataTypes.ENUM("low", "medium", "high", "urgent"),
       ticket_trouble_category_id: DataTypes.INTEGER,
+      ticket_trouble_description: DataTypes.TEXT,
       solution: DataTypes.TEXT,
       ticket_network_status_id: DataTypes.INTEGER,
       down_time: DataTypes.DATE,
