@@ -251,7 +251,8 @@ const getDataTable = async (req, res) => {
     4: { name: "Handling Activity", count: 0 },
     5: { name: "Done", count: 0 },
     6: { name: "Canceled", count: 0 },
-    7: { name: "All", count: 0 },
+    7: { name: "Stop Clock", count: 0 },
+    8: { name: "All", count: 0 },
   };
 
   const allTicket = await ticketModel.findAll({
@@ -279,7 +280,7 @@ const getDataTable = async (req, res) => {
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
       general_report[element.ticket_status.code].count += 1;
-      general_report[7].count += 1;
+      general_report[8].count += 1;
     });
   }
 
@@ -414,7 +415,8 @@ const getDataTableExecutor = async (req, res) => {
     4: { name: "Handling Activity", count: 0 },
     5: { name: "Done", count: 0 },
     6: { name: "Canceled", count: 0 },
-    7: { name: "All", count: 0 },
+    7: { name: "Stop Clock", count: 0 },
+    8: { name: "All", count: 0 },
   };
 
   const allTicket = await ticketModel.findAll({
@@ -444,7 +446,7 @@ const getDataTableExecutor = async (req, res) => {
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
       general_report[element.ticket_status.code].count += 1;
-      general_report[7].count += 1;
+      general_report[8].count += 1;
     });
   }
 
@@ -578,7 +580,8 @@ const getDataTableCustomer = async (req, res) => {
     4: { name: "Handling Activity", count: 0 },
     5: { name: "Done", count: 0 },
     6: { name: "Canceled", count: 0 },
-    7: { name: "All", count: 0 },
+    7: { name: "Stop Clock", count: 0 },
+    8: { name: "All", count: 0 },
   };
 
   const allTicket = await ticketModel.findAll({
@@ -604,7 +607,7 @@ const getDataTableCustomer = async (req, res) => {
   if (allTicket.length > 0) {
     allTicket.forEach((element) => {
       general_report[element.ticket_status.code].count += 1;
-      general_report[7].count += 1;
+      general_report[8].count += 1;
     });
   }
 
@@ -1610,6 +1613,12 @@ const getDataById = async (req, res) => {
 
   const stop_clock = await ticketStatusModel.findOne({
     where: { code: "7" },
+    attributes: { exclude: ["id", "createdAt", "updatedAt"] },
+  });
+
+  const cancel = await ticketStatusModel.findOne({
+    where: { code: "6" },
+    attributes: { exclude: ["id", "createdAt", "updatedAt"] },
   });
 
   const users = await userModel.findAll({
@@ -1631,6 +1640,7 @@ const getDataById = async (req, res) => {
       ticket: findData,
       ticket_status,
       stop_clock,
+      cancel,
       users,
       user: req.user,
     },
