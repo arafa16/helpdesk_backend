@@ -215,7 +215,13 @@ const getDataTable = async (req, res) => {
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
       {
         model: ticketActivityModel,
-        attributes: { exclude: ["id"] },
+        attributes: [
+          "uuid",
+          "description",
+          "start_date",
+          "end_date",
+          "createdAt",
+        ],
         include: [
           {
             model: ticketStatusModel,
