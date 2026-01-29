@@ -30,7 +30,7 @@ const { Op, where } = require("sequelize");
 const create_job_position_reminder = async (
   ticket_id,
   job_position_code,
-  date
+  date,
 ) => {
   await job_position_code.map(async (code) => {
     const getHours = new Date(date).getHours();
@@ -83,7 +83,7 @@ const update_job_position_reminder = async (data) => {
       where: {
         ticket_id: data.ticket_id,
       },
-    }
+    },
   );
 };
 
@@ -213,15 +213,6 @@ const getDataTable = async (req, res) => {
       { model: customerModel, attributes: ["uuid", "name"] },
       { model: areaModel, attributes: ["uuid", "name"] },
       { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
-      { model: ticketAccessModel, attributes: ["uuid", "name"] },
-      { model: ticketCategoryModel, attributes: ["uuid", "name"] },
-      { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
-      { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
-      { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
-      { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
-      { model: userModel, attributes: ["uuid", "name"], as: "fourth_executor" },
-      { model: userModel, attributes: ["uuid", "name"], as: "user" },
-      { model: ticketNetworkStatusModel, attributes: ["uuid", "name"] },
       {
         model: ticketActivityModel,
         attributes: { exclude: ["id"] },
@@ -232,7 +223,17 @@ const getDataTable = async (req, res) => {
           },
         ],
       },
-      { model: companyModel, attributes: ["uuid", "name"] },
+    ],
+    attributes: [
+      "uuid",
+      "display_name",
+      "subject",
+      "case_number",
+      "down_time",
+      "up_time",
+      "is_active",
+      "createdAt",
+      "updatedAt",
     ],
     offset,
     limit,
@@ -1706,7 +1707,7 @@ const updateStatusDataById = async (req, res) => {
   await createTicketHistory(
     findData.id,
     req.user.id,
-    `Ticket status updated to ${findStatus.name} and create ticket activity ${findStatus.name}`
+    `Ticket status updated to ${findStatus.name} and create ticket activity ${findStatus.name}`,
   );
 
   return res.status(200).json({
