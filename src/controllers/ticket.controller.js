@@ -237,6 +237,7 @@ const getDataTable = async (req, res) => {
       "case_number",
       "down_time",
       "up_time",
+      "complaint_time",
       "is_active",
       "createdAt",
       "updatedAt",
