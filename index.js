@@ -53,14 +53,14 @@ app.use(
       secure: "auto",
       expires: 1000 * 60 * 60 * process.env.SESS_EXPIRES,
     },
-  })
+  }),
 );
 
 app.use(
   cors({
     credentials: true,
     origin: [process.env.LINK_FRONTEND],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -86,12 +86,12 @@ app.use("/api/v1/ticket_attachment", ticket_attachment_router);
 app.use("/api/v1/ticket_activity", ticket_activity_router);
 app.use(
   "/api/v1/ticket_activity_attachment",
-  ticket_activity_attachment_router
+  ticket_activity_attachment_router,
 );
 app.use("/api/v1/ticket_activity_comment", ticket_activity_comment_router);
 app.use(
   "/api/v1/ticket_activity_comment_attachment",
-  ticket_activity_comment_attachment_router
+  ticket_activity_comment_attachment_router,
 );
 app.use("/api/v1/ticket_user_reminder", ticket_user_reminder_router);
 app.use("/api/v1/user", user_router);
