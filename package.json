@@ -1,7 +1,7 @@
 {
-  "name": "ticket-backend",
-  "version": "0.1.0",
-  "description": "",
+  "name": "helpdesk_api_backend",
+  "version": "1.0.0",
+  "description": "Helpdesk Api Backend",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
