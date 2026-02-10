@@ -1,3 +1,7 @@
+## v1.0.0 - 2026-02-10
+
+- docs: update version 0.1.0 to 1.0.0 by [Ara Fa Adri](https://github.com/arafa16) in [#4208ccc](https://github.com/arafa16/helpdesk_backend/commit/4208ccc0a8b339656ba1712f8045d750704da15b).
+
 ## v0.1.0 - 2026-02-10
 
 - fixs: hide attachment in the github by [Ara Fa Adri](https://github.com/arafa16) in [#9b86311](https://github.com/arafa16/helpdesk_backend/commit/9b86311e8bf36c40ff55e2c6c42b8d217437c8ed).
