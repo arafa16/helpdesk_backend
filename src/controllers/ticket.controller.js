@@ -267,6 +267,7 @@ const getDataTable = async (req, res) => {
     where: {
       is_active: true,
     },
+    attributes: ["uuid", "ticket_status_id"],
     include: [
       {
         model: ticketStatusModel,

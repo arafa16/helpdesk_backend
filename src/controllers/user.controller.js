@@ -8,7 +8,7 @@ const {
   job_position: jobPositionModel,
   area: areaModel,
 } = require("../models");
-const { Op, where } = require("sequelize");
+const { Op, where, or } = require("sequelize");
 const CustomHttpError = require("../utils/custom_http_error.js");
 const argon = require("argon2");
 
@@ -26,7 +26,7 @@ const getDatas = async (req, res) => {
 };
 
 const getDataTable = async (req, res) => {
-  const { search, user_status_uuid, location_uuid } = req.query;
+  const { search, user_status_uuid, location_uuid, sort } = req.query;
 
   let whereClause = {};
 
@@ -59,6 +59,16 @@ const getDataTable = async (req, res) => {
       ...whereClause,
       user_status_id: { [Op.ne]: 4 },
     };
+  }
+
+  let order;
+
+  if (sort) {
+    sort === "asc"
+      ? (order = [["createdAt", "ASC"]])
+      : (order = [["createdAt", "DESC"]]);
+  } else {
+    order = [["name", "ASC"]];
   }
 
   const page = parseInt(req.query.page) || 1;
@@ -102,6 +112,7 @@ const getDataTable = async (req, res) => {
     ],
     offset,
     limit,
+    order,
   });
 
   const pages = Math.ceil(users.count / limit);
@@ -620,7 +631,7 @@ const updateData = async (req, res) => {
       },
       {
         where: { id: findUser.privilege.id },
-      }
+      },
     );
   } else {
     const newPrivilege = await privilegeModel.create({
