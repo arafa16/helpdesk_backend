@@ -207,51 +207,7 @@ const getDataTable = async (req, res) => {
 
   const offset = (page - 1) * limit;
 
-  const ticket_data = await ticketModel.findAll({
-    where: whereClause,
-    include: [
-      { model: customerModel, attributes: ["uuid", "name"] },
-      { model: areaModel, attributes: ["uuid", "name"] },
-      { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
-      {
-        model: ticketActivityModel,
-        attributes: [
-          "uuid",
-          "description",
-          "start_date",
-          "end_date",
-          "createdAt",
-        ],
-        include: [
-          {
-            model: ticketStatusModel,
-            attributes: ["uuid", "name", "code", "is_active"],
-          },
-        ],
-      },
-    ],
-    attributes: [
-      "uuid",
-      "display_name",
-      "subject",
-      "case_number",
-      "down_time",
-      "up_time",
-      "complaint_time",
-      "is_active",
-      "createdAt",
-      "updatedAt",
-    ],
-    offset,
-    limit,
-    order: [["id", "DESC"]],
-  });
-
-  const count_ticket = await ticketModel.count({
-    where: whereClause,
-  });
-
-  // const ticket = await ticketModel.findAndCountAll({
+  // const ticket_data = await ticketModel.findAll({
   //   where: whereClause,
   //   include: [
   //     { model: customerModel, attributes: ["uuid", "name"] },
@@ -288,11 +244,55 @@ const getDataTable = async (req, res) => {
   //   ],
   //   offset,
   //   limit,
-  //   distinct: true,
   //   order: [["id", "DESC"]],
   // });
 
-  const pages = Math.ceil(parseInt(count_ticket) / limit);
+  // const count_ticket = await ticketModel.count({
+  //   where: whereClause,
+  // });
+
+  const ticket = await ticketModel.findAndCountAll({
+    where: whereClause,
+    include: [
+      { model: customerModel, attributes: ["uuid", "name"] },
+      { model: areaModel, attributes: ["uuid", "name"] },
+      { model: ticketStatusModel, attributes: ["uuid", "name", "code"] },
+      {
+        model: ticketActivityModel,
+        attributes: [
+          "uuid",
+          "description",
+          "start_date",
+          "end_date",
+          "createdAt",
+        ],
+        include: [
+          {
+            model: ticketStatusModel,
+            attributes: ["uuid", "name", "code", "is_active"],
+          },
+        ],
+      },
+    ],
+    attributes: [
+      "uuid",
+      "display_name",
+      "subject",
+      "case_number",
+      "down_time",
+      "up_time",
+      "complaint_time",
+      "is_active",
+      "createdAt",
+      "updatedAt",
+    ],
+    offset,
+    limit,
+    distinct: true,
+    order: [["id", "DESC"]],
+  });
+
+  const pages = Math.ceil(parseInt(ticket.count) / limit);
 
   //general report
 
@@ -340,9 +340,9 @@ const getDataTable = async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Ticket data retrieved successfully",
-    data: ticket_data,
+    data: ticket.rows,
     meta: {
-      total: count_ticket,
+      total: ticket.count,
       page,
       limit,
       pages,
