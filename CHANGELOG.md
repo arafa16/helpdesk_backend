@@ -1,5 +1,9 @@
 ### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.0.0...main)
 
+### [v1.3.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.3.0) - 2026-05-19
+
+- docs: update version from 1.1.0 to 1.3.0 (note: use version frontend) by [Ara Fa Adri](https://github.com/arafa16) in [#62958d2](https://github.com/arafa16/helpdesk_backend/commit/62958d258801981354c115a5e18a4486cfaaaf20).
+
 ### [v1.1.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.1.0) - 2026-05-19
 
 - docs: update version 1.0.0 to 1.1.0 by [Ara Fa Adri](https://github.com/arafa16) in [#8c7467e](https://github.com/arafa16/helpdesk_backend/commit/8c7467e6533d32a92d27536b0b7a22d996418844).
