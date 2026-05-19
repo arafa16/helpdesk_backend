@@ -1,5 +1,17 @@
 ### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.0.0...main)
 
+### [v1.1.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.1.0) - 2026-05-19
+
+- docs: update version 1.0.0 to 1.1.0 by [Ara Fa Adri](https://github.com/arafa16) in [#8c7467e](https://github.com/arafa16/helpdesk_backend/commit/8c7467e6533d32a92d27536b0b7a22d996418844).
+
+- fixs: optimization get data ticket by [Ara Fa Adri](https://github.com/arafa16) in [#bff7063](https://github.com/arafa16/helpdesk_backend/commit/bff7063cb177e47f4857f8390bd24ae41d36c9d3).
+
+- fixs: test speed before optimization by [Ara Fa Adri](https://github.com/arafa16) in [#6cf52ed](https://github.com/arafa16/helpdesk_backend/commit/6cf52edd1735971a96cb09b61ad317703cce1ea9).
+
+- build: test get table controller by [Ara Fa Adri](https://github.com/arafa16) in [#a135aac](https://github.com/arafa16/helpdesk_backend/commit/a135aac98a6956f94169993eef656fd932f04b7f).
+
+- fixs: sort user table with name asc and minimalizer load data ticket by [Ara Fa Adri](https://github.com/arafa16) in [#6b63234](https://github.com/arafa16/helpdesk_backend/commit/6b632349117845ec3c98f7aee10dde98e47342ef).
+
 ### [v1.0.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.0.0) - 2026-02-10
 
 #### v1.0.0 - 2026-02-10
