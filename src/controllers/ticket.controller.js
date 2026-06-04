@@ -5,6 +5,7 @@ const {
   ticket_access: ticketAccessModel,
   ticket_category: ticketCategoryModel,
   ticket_trouble_category: ticketTroubleCategoryModel,
+  ticket_trouble_couse: ticketTroubleCouseModel,
   ticket_status: ticketStatusModel,
   ticket_activity: ticketActivityModel,
   user: userModel,
@@ -665,6 +666,7 @@ const createData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_uuid,
+    ticket_trouble_couse_uuid,
     ticket_trouble_description,
     solution,
     ticket_network_status_uuid,
@@ -831,6 +833,22 @@ const createData = async (req, res) => {
     }
   }
 
+  let ticket_trouble_couse_id = null;
+
+  if (ticket_trouble_couse_uuid) {
+    const find = await ticketTroubleCouseModel.findOne({
+      where: {
+        uuid: ticket_trouble_couse_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket trouble couse not found", 404);
+    } else {
+      ticket_trouble_couse_id = find.id;
+    }
+  }
+
   let ticket_status_id = 1;
 
   if (ticket_status_uuid) {
@@ -940,6 +958,7 @@ const createData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_id,
+    ticket_trouble_couse_id,
     ticket_trouble_description,
     solution,
     ticket_network_status_id,
@@ -1314,28 +1333,40 @@ const updateData = async (req, res) => {
 const getCreateDataAttribute = async (req, res) => {
   const location = await locationModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const area = await areaModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_access = await ticketAccessModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_category = await ticketCategoryModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_trouble_category = await ticketTroubleCategoryModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
+  });
+  const ticket_trouble_couse = await ticketTroubleCouseModel.findAll({
+    where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_status = await ticketStatusModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const customer = await customerModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
   const company = await companyModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
   const executor = await userModel.findAll({
@@ -1343,6 +1374,7 @@ const getCreateDataAttribute = async (req, res) => {
       is_executor: true,
       is_active: true,
     },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
   const user_customer = await userModel.findAll({
@@ -1350,10 +1382,12 @@ const getCreateDataAttribute = async (req, res) => {
       is_customer: true,
       is_active: true,
     },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
   const ticket_network_status = await ticketNetworkStatusModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
 
   return res.status(200).json({
@@ -1365,6 +1399,7 @@ const getCreateDataAttribute = async (req, res) => {
       ticket_access,
       ticket_category,
       ticket_trouble_category,
+      ticket_trouble_couse,
       ticket_status,
       executor,
       customer,
@@ -1387,6 +1422,7 @@ const getEditDataAttribute = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCouseModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
@@ -1457,30 +1493,43 @@ const getEditDataAttribute = async (req, res) => {
   });
   const location = await locationModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const area = await areaModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_access = await ticketAccessModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_category = await ticketCategoryModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_trouble_category = await ticketTroubleCategoryModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
+  });
+  const ticket_trouble_couse = await ticketTroubleCouseModel.findAll({
+    where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const ticket_status = await ticketStatusModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
   const customer = await customerModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
+    order: [["name", "ASC"]],
   });
   const executor = await userModel.findAll({
     where: {
       is_executor: true,
       is_active: true,
     },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
   const user_customer = await userModel.findAll({
@@ -1488,15 +1537,18 @@ const getEditDataAttribute = async (req, res) => {
       is_customer: true,
       is_active: true,
     },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
 
   const ticket_network_status = await ticketNetworkStatusModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
   });
 
   const company = await companyModel.findAll({
     where: { is_active: true },
+    attributes: { exclude: ["id"] },
     order: [["name", "ASC"]],
   });
 
@@ -1510,6 +1562,7 @@ const getEditDataAttribute = async (req, res) => {
       ticket_access,
       ticket_category,
       ticket_trouble_category,
+      ticket_trouble_couse,
       ticket_status,
       executor,
       customer,
