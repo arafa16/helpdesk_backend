@@ -31,6 +31,7 @@ const ticket_activity_comment_attachment_router = require("./src/routes/ticket_a
 const ticket_activity_comment_router = require("./src/routes/ticket_activity_comment.route.js");
 const ticket_user_reminder_router = require("./src/routes/ticket_user_reminder.route.js");
 const user_router = require("./src/routes/user.route.js");
+const ticket_trouble_couse_router = require("./src/routes/ticket_trouble_couse.route.js");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -95,6 +96,7 @@ app.use(
 );
 app.use("/api/v1/ticket_user_reminder", ticket_user_reminder_router);
 app.use("/api/v1/user", user_router);
+app.use("/api/v1/ticket_trouble_couse", ticket_trouble_couse_router);
 
 app.use(errorHandlerMiddleware);
 app.use(not_found);
