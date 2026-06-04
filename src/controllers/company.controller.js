@@ -227,7 +227,7 @@ const updateData = async (req, res) => {
           success: true,
           message: "data updated successfully",
         });
-      }
+      },
     );
   } else {
     await findData.update({
@@ -258,7 +258,9 @@ const deleteData = async (req, res) => {
     if (permanent === "1") {
       await findData.destroy();
 
-      fs.unlinkSync(`./public${findData.logo_url}`);
+      if (findData.logo_url) {
+        fs.unlinkSync(`./public${findData.logo_url}`);
+      }
 
       return res.status(200).json({
         success: true,
