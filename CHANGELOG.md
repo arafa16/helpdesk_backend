@@ -1,6 +1,22 @@
-### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.0.0...main)
+### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.3.0...main)
+
+### [v1.4.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.4.0) - 2026-06-04
+
+- fixs: trouble when make new company by [Ara Fa Adri](https://github.com/arafa16) in [#7ccbb8d](https://github.com/arafa16/helpdesk_backend/commit/7ccbb8d377398cb58beef0e50be496321de25710).
+
+- build: add ticket trouble couse at ticket controller by [Ara Fa Adri](https://github.com/arafa16) in [#3539e8d](https://github.com/arafa16/helpdesk_backend/commit/3539e8d0a498203cbe8a40683251d210438345ef).
+
+- build: make ticket trouble couse controller, route, and setup on index by [Ara Fa Adri](https://github.com/arafa16) in [#6e6c2ee](https://github.com/arafa16/helpdesk_backend/commit/6e6c2eee3ffc2604e42dd93a8bfcd7142b94ca40).
+
+- build: add ticket trouble couse id field in ticket table by [Ara Fa Adri](https://github.com/arafa16) in [#cce1260](https://github.com/arafa16/helpdesk_backend/commit/cce126096c6d26aa06e16a0ce8f90040a15a50bc).
+
+- buils: make ticket trouble seed by [Ara Fa Adri](https://github.com/arafa16) in [#37bac41](https://github.com/arafa16/helpdesk_backend/commit/37bac413dfff317187bd6785c8a19c8c84841e37).
+
+- build: make ticket trouble couse migration and model by [Ara Fa Adri](https://github.com/arafa16) in [#0cd89b5](https://github.com/arafa16/helpdesk_backend/commit/0cd89b59f42f4e1bc017a1ab853792824541b62d).
 
 ### [v1.3.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.3.0) - 2026-05-19
+
+- build: update v.1.2.0 to 1.3.0 and update git ignore by [Ara Fa Adri](https://github.com/arafa16) in [#7c8789a](https://github.com/arafa16/helpdesk_backend/commit/7c8789a2d897d53be6b11005518b1ade93b695fe).
 
 - docs: update version from 1.1.0 to 1.3.0 (note: use version frontend) by [Ara Fa Adri](https://github.com/arafa16) in [#62958d2](https://github.com/arafa16/helpdesk_backend/commit/62958d258801981354c115a5e18a4486cfaaaf20).
 
