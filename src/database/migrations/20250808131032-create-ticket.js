@@ -108,6 +108,10 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
+      ticket_trouble_couse_id: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+      },
       ticket_trouble_description: {
         type: Sequelize.TEXT,
         allowNull: true,

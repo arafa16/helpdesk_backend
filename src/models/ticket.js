@@ -44,6 +44,9 @@ module.exports = (sequelize, DataTypes) => {
       ticket.belongsTo(models.ticket_trouble_category, {
         foreignKey: "ticket_trouble_category_id",
       });
+      ticket.belongsTo(models.ticket_trouble_couse, {
+        foreignKey: "ticket_trouble_couse_id",
+      });
       ticket.belongsTo(models.area, {
         foreignKey: "area_id",
       });
@@ -104,6 +107,7 @@ module.exports = (sequelize, DataTypes) => {
       gmap: DataTypes.TEXT,
       priority_level: DataTypes.ENUM("low", "medium", "high", "urgent"),
       ticket_trouble_category_id: DataTypes.INTEGER,
+      ticket_trouble_couse_id: DataTypes.INTEGER,
       ticket_trouble_description: DataTypes.TEXT,
       solution: DataTypes.TEXT,
       ticket_network_status_id: DataTypes.INTEGER,
@@ -131,7 +135,7 @@ module.exports = (sequelize, DataTypes) => {
       created_at: "created_at",
       updated_at: "updated_at",
       underscored: true,
-    }
+    },
   );
   return ticket;
 };
