@@ -1,6 +1,16 @@
 ### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.3.0...main)
 
-### [v1.4.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.4.0) - 2026-06-04
+### [v1.4.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.4.0) - 2026-06-08
+
+- build: update version 1.3.0 to 1.4.0 by [Ara Fa Adri](https://github.com/arafa16) in [#88a863d](https://github.com/arafa16/helpdesk_backend/commit/88a863dda40c58b31295bc3da2a979678dafa1a2).
+
+- fixs: clean return by [Ara Fa Adri](https://github.com/arafa16) in [#b9f5ada](https://github.com/arafa16/helpdesk_backend/commit/b9f5ada427f2f21d0beabd19a32bb24b7d0f0b10).
+
+- build: add ticket trouble couse to table export by [Ara Fa Adri](https://github.com/arafa16) in [#3bd3f9b](https://github.com/arafa16/helpdesk_backend/commit/3bd3f9b7373cd031417985bf9c560b0b75d790ec).
+
+- build: add ticket trouble couse to ticket attributes by [Ara Fa Adri](https://github.com/arafa16) in [#d461df8](https://github.com/arafa16/helpdesk_backend/commit/d461df8fc0741945b224bbc89669041be0d40156).
+
+### 2026-06-04
 
 - fixs: trouble when make new company by [Ara Fa Adri](https://github.com/arafa16) in [#7ccbb8d](https://github.com/arafa16/helpdesk_backend/commit/7ccbb8d377398cb58beef0e50be496321de25710).
 
