@@ -5,6 +5,7 @@ const {
   ticket_access: ticketAccessModel,
   ticket_category: ticketCategoryModel,
   ticket_trouble_category: ticketTroubleCategoryModel,
+  ticket_trouble_couse: ticketTroubleCouseModel,
   ticket_status: ticketStatusModel,
   ticket_activity: ticketActivityModel,
   user: userModel,
@@ -57,6 +58,7 @@ const export_data = async (req, res) => {
         { model: ticketAccessModel, attributes: ["uuid", "name"] },
         { model: ticketCategoryModel, attributes: ["uuid", "name"] },
         { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
+        { model: ticketTroubleCouseModel, attributes: ["uuid", "name"] },
         {
           model: userModel,
           attributes: ["uuid", "name"],
@@ -103,8 +105,13 @@ const export_data = async (req, res) => {
       { header: "PENCAPAIAN", key: "PENCAPAIAN", width: 25 },
       { header: "JUSTIFIKASI", key: "JUSTIFIKASI", width: 25 },
       { header: "JENIS GANGGUAN", key: "JENIS_GANGGUAN", width: 25 },
-      { header: "STATUS GANGGUAN", key: "STATUS_GANGGUAN", width: 25 },
+      {
+        header: "PENYEBAB GANGGUAN (TROUBLE COUSE)",
+        key: "TICKET_TROUBLE_COUSE",
+        width: 25,
+      },
       { header: "PENYEBAB GANGGUAN", key: "PENYEBAB_GANGGUAN", width: 25 },
+      { header: "STATUS GANGGUAN", key: "STATUS_GANGGUAN", width: 25 },
       { header: "SOLUSI GANGGUAN", key: "SOLUSI_GANGGUAN", width: 25 },
       { header: "KENDALA", key: "KENDALA", width: 25 },
       { header: "TEKNISI 1", key: "TEKNISI_1", width: 25 },
@@ -139,7 +146,7 @@ const export_data = async (req, res) => {
         .toFixed(2);
 
       let tiba_dilokasi = data?.ticket_activities.filter(
-        (data) => data?.ticket_status?.code === "2"
+        (data) => data?.ticket_status?.code === "2",
       );
 
       let calculate_durasi = tiba_dilokasi
@@ -160,7 +167,7 @@ const export_data = async (req, res) => {
         .toFixed(0);
 
       let tanggal_selesai = data?.ticket_activities.filter(
-        (data) => data?.ticket_status?.code === "5"
+        (data) => data?.ticket_status?.code === "5",
       );
 
       // Helper to format hours as "X jam Y menit"
@@ -190,7 +197,7 @@ const export_data = async (req, res) => {
         JAM_TIBA_DILOKASI:
           tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date !== null
             ? dayjs(tiba_dilokasi[tiba_dilokasi.length - 1]?.end_date).format(
-                "HH:mm"
+                "HH:mm",
               )
             : "",
         DURASI_ETA: calculate_durasi
@@ -203,21 +210,22 @@ const export_data = async (req, res) => {
         TANGGAL_SELESAI:
           tanggal_selesai[tanggal_selesai.length - 1]?.end_date !== null
             ? dayjs(
-                tanggal_selesai[tanggal_selesai.length - 1]?.end_date
+                tanggal_selesai[tanggal_selesai.length - 1]?.end_date,
               ).format("YYYY-MM-DD")
             : "",
         JAM_SELESAI:
           tanggal_selesai[tanggal_selesai.length - 1]?.end_date !== null
             ? dayjs(
-                tanggal_selesai[tanggal_selesai.length - 1]?.end_date
+                tanggal_selesai[tanggal_selesai.length - 1]?.end_date,
               ).format("HH:mm")
             : "",
         DURASI: durasi ? formatHourMinute(Number(durasi)) : "",
         PENCAPAIAN: durasi >= 6 ? "tidak tercapai" : "tercapai",
         JUSTIFIKASI: data?.justification,
         JENIS_GANGGUAN: data?.ticket_category?.name,
-        STATUS_GANGGUAN: data?.ticket_status?.name,
+        TICKET_TROUBLE_COUSE: data?.ticket_trouble_couse?.name,
         PENYEBAB_GANGGUAN: data?.rfo,
+        STATUS_GANGGUAN: data?.ticket_status?.name,
         SOLUSI_GANGGUAN: data?.solution,
         KENDALA: data?.constraint,
         TEKNISI_1: data?.first_executor?.name,
@@ -229,12 +237,12 @@ const export_data = async (req, res) => {
 
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     );
 
     res.setHeader(
       "Content-Disposition",
-      "attachment;filename=" + "data_user.xlsx"
+      "attachment;filename=" + "data_user.xlsx",
     );
 
     workbook.xlsx.write(res);
