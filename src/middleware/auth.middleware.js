@@ -11,12 +11,18 @@ const verifyToken = async (req, res, next) => {
   const token = req.session.token;
 
   if (!token) {
-    throw new CustomHttpError("access denied, no token provided", 403);
+    return res.status(403).json({
+      success: false,
+      message: "access denied, no token provided",
+    });
   }
 
   jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
     if (err) {
-      throw new CustomHttpError("access expired, please login again", 401);
+      return res.status(401).json({
+        success: false,
+        message: "access expired, please login again",
+      });
     }
 
     const user = await userModel.findOne({
@@ -38,7 +44,6 @@ const verifyToken = async (req, res, next) => {
     });
 
     if (!user) {
-      // throw new CustomHttpError("login failed, user not found or deleted", 404);
       return res.status(404).json({
         success: false,
         message: "login failed, user not found or deleted",
