@@ -1043,6 +1043,7 @@ const updateData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_uuid,
+    ticket_trouble_couse_uuid,
     ticket_trouble_description,
     solution,
     ticket_network_status_uuid,
@@ -1192,6 +1193,22 @@ const updateData = async (req, res) => {
     }
   }
 
+  let ticket_trouble_couse_id = null;
+
+  if (ticket_trouble_couse_uuid) {
+    const find = await ticketTroubleCouseModel.findOne({
+      where: {
+        uuid: ticket_trouble_couse_uuid,
+      },
+    });
+
+    if (find === null) {
+      throw new CustomHttpError("ticket trouble couse not found", 404);
+    } else {
+      ticket_trouble_couse_id = find.id;
+    }
+  }
+
   let ticket_status_id = null;
 
   if (ticket_status_uuid) {
@@ -1296,6 +1313,7 @@ const updateData = async (req, res) => {
     gmap,
     priority_level,
     ticket_trouble_category_id,
+    ticket_trouble_couse_id,
     ticket_trouble_description,
     solution,
     ticket_network_status_id,
@@ -1585,6 +1603,7 @@ const getDataById = async (req, res) => {
       { model: ticketAccessModel, attributes: ["uuid", "name"] },
       { model: ticketCategoryModel, attributes: ["uuid", "name"] },
       { model: ticketTroubleCategoryModel, attributes: ["uuid", "name"] },
+      { model: ticketTroubleCouseModel, attributes: ["uuid", "name"] },
       { model: userModel, attributes: ["uuid", "name"], as: "first_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "second_executor" },
       { model: userModel, attributes: ["uuid", "name"], as: "third_executor" },
