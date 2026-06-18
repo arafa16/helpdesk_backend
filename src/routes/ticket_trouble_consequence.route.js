@@ -6,7 +6,7 @@ const {
   updateData,
   deleteData,
   getDataTable,
-} = require("../controllers/ticket_trouble_couse.controller");
+} = require("../controllers/ticket_trouble_consequence.controller");
 const { verifyToken } = require("../middleware/auth.middleware");
 
 const router = express.Router();

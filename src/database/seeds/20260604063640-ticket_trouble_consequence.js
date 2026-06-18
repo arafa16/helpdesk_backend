@@ -4,7 +4,7 @@ const uuid = require("uuid");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    const problemCauses = [
+    const problemConsequences = [
       "CLOSURE HILANG",
       "CLOSURE RUSAK",
       "COOPLRE RUSAK (DI ODP,OTB & XCC)",
@@ -26,11 +26,11 @@ module.exports = {
     ];
 
     const records = [];
-    problemCauses.forEach((cause, index) => {
+    problemConsequences.forEach((consequence, index) => {
       records.push({
         id: index + 1,
         uuid: uuid.v4(),
-        name: cause,
+        name: consequence,
         sequence: index + 1,
         code: index + 1,
         is_active: true,
@@ -39,10 +39,10 @@ module.exports = {
       });
     });
 
-    return queryInterface.bulkInsert("ticket_trouble_couses", records);
+    return queryInterface.bulkInsert("ticket_trouble_consequences", records);
   },
 
   async down(queryInterface, Sequelize) {
-    queryInterface.bulkDelete("ticket_trouble_couses", null, {});
+    queryInterface.bulkDelete("ticket_trouble_consequences", null, {});
   },
 };

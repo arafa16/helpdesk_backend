@@ -1,5 +1,5 @@
 const {
-  ticket_trouble_couse: ticketTroubleCouseModel,
+  ticket_trouble_consequence: ticketTroubleConsequenceModel,
 } = require("../models/index.js");
 const { Op } = require("sequelize");
 const CustomHttpError = require("../utils/custom_http_error.js");
@@ -34,7 +34,7 @@ const getDatas = async (req, res) => {
     where.code = code;
   }
 
-  const rows = await ticketTroubleCouseModel.findAll({
+  const rows = await ticketTroubleConsequenceModel.findAll({
     where,
     order,
   });
@@ -62,15 +62,13 @@ const getDataTable = async (req, res) => {
 
   if (is_active) {
     whereClause.is_active = is_active;
-  } else {
-    whereClause.is_active = true;
   }
 
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
 
   const offset = (page - 1) * limit;
-  const data = await ticketTroubleCouseModel.findAndCountAll({
+  const data = await ticketTroubleConsequenceModel.findAndCountAll({
     where: whereClause,
     limit,
     offset,
@@ -94,7 +92,7 @@ const getDataTable = async (req, res) => {
 const getDataById = async (req, res) => {
   const { uuid } = req.params;
 
-  const findData = await ticketTroubleCouseModel.findOne({
+  const findData = await ticketTroubleConsequenceModel.findOne({
     where: { uuid },
   });
 
@@ -116,7 +114,7 @@ const createData = async (req, res) => {
     throw new CustomHttpError("name, sequence, and code are required", 400);
   }
 
-  const newData = await ticketTroubleCouseModel.create({
+  const newData = await ticketTroubleConsequenceModel.create({
     name,
     sequence,
     code,
@@ -134,7 +132,7 @@ const updateData = async (req, res) => {
   const { uuid } = req.params;
   const { name, sequence, code, is_active } = req.body;
 
-  const findData = await ticketTroubleCouseModel.findOne({
+  const findData = await ticketTroubleConsequenceModel.findOne({
     where: { uuid },
   });
 
@@ -160,7 +158,7 @@ const deleteData = async (req, res) => {
   const { uuid } = req.params;
   const { permanent } = req.query;
 
-  const findData = await ticketTroubleCouseModel.findOne({
+  const findData = await ticketTroubleConsequenceModel.findOne({
     where: { uuid },
   });
 
