@@ -108,7 +108,7 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
-      ticket_trouble_couse_id: {
+      ticket_trouble_consequence_id: {
         type: Sequelize.INTEGER,
         allowNull: true,
       },
