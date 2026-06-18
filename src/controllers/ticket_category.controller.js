@@ -66,8 +66,6 @@ const getDataTable = async (req, res) => {
 
   if (is_active) {
     whereClause.is_active = is_active;
-  } else {
-    whereClause.is_active = true;
   }
 
   const page = parseInt(req.query.page) || 1;
