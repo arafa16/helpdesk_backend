@@ -1,6 +1,6 @@
 {
   "name": "helpdesk_api_backend",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "Helpdesk Api Backend",
   "main": "index.js",
   "scripts": {
