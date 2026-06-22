@@ -1,4 +1,22 @@
-### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.3.0...main)
+### [Unreleased](https://github.com/arafa16/helpdesk_backend/compare/1.4.1...main)
+
+### [v1.4.1](https://github.com/arafa16/helpdesk_backend/releases/tag/1.4.1) - 2026-06-21
+
+- docs: change version 1.4.0 to 1.4.1 by [Ara Fa Adri](https://github.com/arafa16) in [#bd64822](https://github.com/arafa16/helpdesk_backend/commit/bd64822917928dd002ce8e64a60e4fa48f359abb).
+
+- fixs: change ticket trouble couse to ticket trouble consequence by [Ara Fa Adri](https://github.com/arafa16) in [#44e0076](https://github.com/arafa16/helpdesk_backend/commit/44e00763495b9d0f6ddde672697736438cc44b36).
+
+### 2026-06-18
+
+- build: setup ticket trouble consequence and category by [Ara Fa Adri](https://github.com/arafa16) in [#93daad4](https://github.com/arafa16/helpdesk_backend/commit/93daad48dcc10bacd92717fdadd0240ac4d2eeaf).
+
+- fixs: change couse to consequence by [Ara Fa Adri](https://github.com/arafa16) in [#919adda](https://github.com/arafa16/helpdesk_backend/commit/919addabe47fc916169e74c79c742e0cd77fa362).
+
+- build: change ticket trouble couse to ticket trouble consequence by [Ara Fa Adri](https://github.com/arafa16) in [#cdd64f3](https://github.com/arafa16/helpdesk_backend/commit/cdd64f35a1464dcdb8633a7ce769f3d817569c8e).
+
+- fixs: delete else shere clouse is_active by [Ara Fa Adri](https://github.com/arafa16) in [#302bf88](https://github.com/arafa16/helpdesk_backend/commit/302bf88826df616530d9abd64aea61e0a8613595).
+
+- delete package-lock.json by [Ara Fa Adri](https://github.com/arafa16) in [#17b2597](https://github.com/arafa16/helpdesk_backend/commit/17b25972886d6df8bdf12bccfe369874301939d6).
 
 ### [v1.4.0](https://github.com/arafa16/helpdesk_backend/releases/tag/1.4.0) - 2026-06-08
 
